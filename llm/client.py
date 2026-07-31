@@ -78,7 +78,9 @@ class LLMResponse:
         end = t.rfind("}")
         if start == -1 or end == -1:
             raise ValueError(f"no JSON object in response: {t[:200]!r}")
-        return json.loads(t[start : end + 1])
+        # strict=False tolerates literal control characters inside strings
+        # (models occasionally emit raw newlines in memo_markdown)
+        return json.loads(t[start : end + 1], strict=False)
 
 
 def _api_equivalent_cost(model: str, tin: int | None, tout: int | None) -> float | None:
@@ -177,7 +179,53 @@ class AnthropicClient:
         )
 
 
-def get_client(backend: str | None = None):
+class CodexCLIClient:
+    """Subprocess to the OpenAI Codex CLI (``codex exec``) — lets the harness
+    run GPT-family comparison arms through the same interface. Token usage is
+    not reported by ``--output-last-message``, so cost stays None (latency is
+    still measured)."""
+
+    backend = "codex"
+
+    def __init__(self, binary: str = "codex", effort: str | None = None):
+        self.binary = binary
+        self.effort = effort or os.environ.get("CODEX_EFFORT", "medium")
+
+    def complete(self, prompt: str, model: str, timeout_s: int = 420) -> LLMResponse:
+        import tempfile
+
+        t0 = time.monotonic()
+        with tempfile.NamedTemporaryFile(mode="r", suffix=".txt", delete=False) as f:
+            out_path = f.name
+        try:
+            proc = subprocess.run(
+                [self.binary, "exec", "--skip-git-repo-check", "--sandbox", "read-only",
+                 "-m", model, "-c", f"model_reasoning_effort={self.effort}",
+                 "--output-last-message", out_path, prompt],
+                capture_output=True,
+                text=True,
+                timeout=timeout_s,
+            )
+            dur = int((time.monotonic() - t0) * 1000)
+            if proc.returncode != 0:
+                raise RuntimeError(
+                    f"codex exited {proc.returncode}: {(proc.stderr or proc.stdout)[-500:]}"
+                )
+            text = Path(out_path).read_text().strip()
+        finally:
+            Path(out_path).unlink(missing_ok=True)
+        if not text:
+            raise RuntimeError("codex returned an empty last message")
+        return LLMResponse(
+            text=text, model=model, backend=self.backend, duration_ms=dur
+        )
+
+
+def get_client(backend: str | None = None, model: str | None = None):
+    """gpt-* models route to the codex backend regardless of the configured
+    default; everything else follows backend config (cli/api)."""
+    if model and model.startswith("gpt-"):
+        return CodexCLIClient()
     backend = backend or os.environ.get("LLM_BACKEND") or load_config()["llm"]["backend"]
     if backend == "cli":
         return ClaudeCLIClient()
@@ -210,7 +258,7 @@ def complete_cached(
         return LLMResponse(**{**d["response"], "cached": True})
     if offline:
         raise FileNotFoundError(f"offline mode: no cached response for {task}/{model}/{key}")
-    client = client or get_client()
+    client = client or get_client(model=model)
     last_err: Exception | None = None
     for attempt in range(max_retries + 1):
         try:
