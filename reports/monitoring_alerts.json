@@ -1,0 +1,360 @@
+[
+ {
+  "merchant_id": 1,
+  "date": "2026-04-30",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 2.1%",
+   "AUP-06.2: volume z=3.1 vs baseline"
+  ],
+  "cb_rate_30d": 0.021,
+  "volume_z": 3.1,
+  "ticket_drift": 1.03,
+  "new_share": 0.0
+ },
+ {
+  "merchant_id": 7,
+  "date": "2026-06-07",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.7%"
+  ],
+  "cb_rate_30d": 0.0268,
+  "volume_z": -0.2,
+  "ticket_drift": 0.9,
+  "new_share": 0.009
+ },
+ {
+  "merchant_id": 15,
+  "date": "2026-04-28",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.6%",
+   "AUP-06.2: volume z=5.0 vs baseline"
+  ],
+  "cb_rate_30d": 0.016,
+  "volume_z": 5.0,
+  "ticket_drift": 1.01,
+  "new_share": 0.024
+ },
+ {
+  "merchant_id": 23,
+  "date": "2026-05-06",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.6%",
+   "AUP-06.2: volume z=3.1 vs baseline"
+  ],
+  "cb_rate_30d": 0.0157,
+  "volume_z": 3.1,
+  "ticket_drift": 0.95,
+  "new_share": 0.005
+ },
+ {
+  "merchant_id": 25,
+  "date": "2026-06-01",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.5%",
+   "AUP-06.2: volume z=4.0 vs baseline"
+  ],
+  "cb_rate_30d": 0.0153,
+  "volume_z": 4.0,
+  "ticket_drift": 1.13,
+  "new_share": 0.005
+ },
+ {
+  "merchant_id": 27,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 3.8%"
+  ],
+  "cb_rate_30d": 0.0385,
+  "volume_z": -0.6,
+  "ticket_drift": 0.97,
+  "new_share": 0.015
+ },
+ {
+  "merchant_id": 28,
+  "date": "2026-05-11",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.5%"
+  ],
+  "cb_rate_30d": 0.025,
+  "volume_z": -0.5,
+  "ticket_drift": 0.97,
+  "new_share": 0.025
+ },
+ {
+  "merchant_id": 29,
+  "date": "2026-05-27",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.7%",
+   "AUP-06.2: volume z=3.3 vs baseline"
+  ],
+  "cb_rate_30d": 0.0166,
+  "volume_z": 3.3,
+  "ticket_drift": 0.95,
+  "new_share": 0.006
+ },
+ {
+  "merchant_id": 32,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 2.0%",
+   "AUP-06.2: volume z=3.6 vs baseline"
+  ],
+  "cb_rate_30d": 0.0195,
+  "volume_z": 3.6,
+  "ticket_drift": 1.13,
+  "new_share": 0.02
+ },
+ {
+  "merchant_id": 37,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 2.1%",
+   "AUP-06.2: volume z=4.1 vs baseline"
+  ],
+  "cb_rate_30d": 0.0208,
+  "volume_z": 4.1,
+  "ticket_drift": 1.02,
+  "new_share": 0.021
+ },
+ {
+  "merchant_id": 42,
+  "date": "2026-04-28",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.6%"
+  ],
+  "cb_rate_30d": 0.0261,
+  "volume_z": 1.6,
+  "ticket_drift": 0.89,
+  "new_share": 0.007
+ },
+ {
+  "merchant_id": 47,
+  "date": "2026-05-08",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.8%",
+   "AUP-06.2: volume z=4.3 vs baseline"
+  ],
+  "cb_rate_30d": 0.0179,
+  "volume_z": 4.3,
+  "ticket_drift": 0.95,
+  "new_share": 0.036
+ },
+ {
+  "merchant_id": 63,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.7%",
+   "AUP-06.2: volume z=3.3 vs baseline"
+  ],
+  "cb_rate_30d": 0.0165,
+  "volume_z": 3.3,
+  "ticket_drift": 1.02,
+  "new_share": 0.013
+ },
+ {
+  "merchant_id": 64,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 3.6%",
+   "AUP-06.2: volume z=4.2 vs baseline"
+  ],
+  "cb_rate_30d": 0.0365,
+  "volume_z": 4.2,
+  "ticket_drift": 0.98,
+  "new_share": 0.005
+ },
+ {
+  "merchant_id": 68,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.7%"
+  ],
+  "cb_rate_30d": 0.0268,
+  "volume_z": 1.2,
+  "ticket_drift": 1.08,
+  "new_share": 0.034
+ },
+ {
+  "merchant_id": 75,
+  "date": "2026-04-27",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.8%"
+  ],
+  "cb_rate_30d": 0.028,
+  "volume_z": 1.0,
+  "ticket_drift": 1.15,
+  "new_share": 0.028
+ },
+ {
+  "merchant_id": 77,
+  "date": "2026-05-06",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.9%"
+  ],
+  "cb_rate_30d": 0.0286,
+  "volume_z": 1.1,
+  "ticket_drift": 1.1,
+  "new_share": 0.05
+ },
+ {
+  "merchant_id": 84,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.9%",
+   "AUP-06.2: volume z=3.9 vs baseline"
+  ],
+  "cb_rate_30d": 0.0192,
+  "volume_z": 3.9,
+  "ticket_drift": 0.98,
+  "new_share": 0.019
+ },
+ {
+  "merchant_id": 87,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 4.0%"
+  ],
+  "cb_rate_30d": 0.0403,
+  "volume_z": 1.8,
+  "ticket_drift": 1.02,
+  "new_share": 0.04
+ },
+ {
+  "merchant_id": 99,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.9%"
+  ],
+  "cb_rate_30d": 0.029,
+  "volume_z": 2.5,
+  "ticket_drift": 1.03,
+  "new_share": 0.01
+ },
+ {
+  "merchant_id": 102,
+  "date": "2026-04-30",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.5%"
+  ],
+  "cb_rate_30d": 0.0252,
+  "volume_z": 0.8,
+  "ticket_drift": 0.98,
+  "new_share": 0.025
+ },
+ {
+  "merchant_id": 103,
+  "date": "2026-05-01",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 3.0%"
+  ],
+  "cb_rate_30d": 0.0305,
+  "volume_z": 2.1,
+  "ticket_drift": 1.08,
+  "new_share": 0.006
+ },
+ {
+  "merchant_id": 112,
+  "date": "2026-05-02",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.7%",
+   "AUP-06.2: volume z=3.6 vs baseline"
+  ],
+  "cb_rate_30d": 0.0174,
+  "volume_z": 3.6,
+  "ticket_drift": 0.94,
+  "new_share": 0.017
+ },
+ {
+  "merchant_id": 123,
+  "date": "2026-06-18",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 2.3%",
+   "AUP-06.2: volume z=3.0 vs baseline"
+  ],
+  "cb_rate_30d": 0.0227,
+  "volume_z": 3.0,
+  "ticket_drift": 1.07,
+  "new_share": 0.0
+ },
+ {
+  "merchant_id": 131,
+  "date": "2026-06-01",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.5%",
+   "AUP-06.2: volume z=3.3 vs baseline"
+  ],
+  "cb_rate_30d": 0.0151,
+  "volume_z": 3.3,
+  "ticket_drift": 1.15,
+  "new_share": 0.01
+ },
+ {
+  "merchant_id": 133,
+  "date": "2026-05-17",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 3.0%"
+  ],
+  "cb_rate_30d": 0.0296,
+  "volume_z": 1.5,
+  "ticket_drift": 0.94,
+  "new_share": 0.022
+ },
+ {
+  "merchant_id": 134,
+  "date": "2026-04-26",
+  "triggers": [
+   "AUP-06.1 warn: 30d chargeback rate 1.6%",
+   "AUP-06.2: volume z=3.3 vs baseline"
+  ],
+  "cb_rate_30d": 0.0158,
+  "volume_z": 3.3,
+  "ticket_drift": 1.0,
+  "new_share": 0.004
+ },
+ {
+  "merchant_id": 143,
+  "date": "2026-05-03",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 3.5%"
+  ],
+  "cb_rate_30d": 0.0352,
+  "volume_z": 2.5,
+  "ticket_drift": 0.99,
+  "new_share": 0.021
+ },
+ {
+  "merchant_id": 145,
+  "date": "2026-05-22",
+  "triggers": [
+   "AUP-06.1 breach: 30d chargeback rate 2.5%"
+  ],
+  "cb_rate_30d": 0.0255,
+  "volume_z": 2.1,
+  "ticket_drift": 1.01,
+  "new_share": 0.006
+ },
+ {
+  "merchant_id": 151,
+  "date": "2025-10-22",
+  "triggers": [
+   "AUP-06.3: avg ticket 2.1x baseline",
+   "AUP-06.4: new-account share 100%"
+  ],
+  "cb_rate_30d": 0.0,
+  "volume_z": -3.0,
+  "ticket_drift": 2.11,
+  "new_share": 1.0
+ },
+ {
+  "merchant_id": 152,
+  "date": "2025-11-29",
+  "triggers": [
+   "AUP-06.3: avg ticket 2.0x baseline",
+   "AUP-06.4: new-account share 100%"
+  ],
+  "cb_rate_30d": 0.0,
+  "volume_z": -1.9,
+  "ticket_drift": 2.02,
+  "new_share": 1.0
+ }
+]
