@@ -1,0 +1,65 @@
+# merchant-risk-screener configuration
+
+seed: 416
+
+paths:
+  fixtures: fixtures
+  decisions: decisions
+  reports: reports
+
+# ---------------------------------------------------------------------------
+# LLM routing — every AI task resolves its model here; override per run with
+# LLM_MODEL_<TASK> env vars or --model flags. Backends as in config comments of
+# llm/client.py (cli = Claude Code-compatible CLI via CLAUDE_CLI_BIN; api =
+# anthropic SDK). Eval-set responses are cached and committed: offline repro.
+# ---------------------------------------------------------------------------
+llm:
+  backend: cli
+  temperature: 0
+  max_retries: 2
+  tasks:
+    merchant_categorize:        # site text -> policy category taxonomy + confidence
+      model: claude-haiku-4-5-20251001
+      prompt_version: categorize_v1
+    policy_screen:              # site text vs AUP-1 -> per-section verdicts w/ quotes
+      model: claude-sonnet-5
+      prompt_version: screen_v1
+      eval_arms: [claude-sonnet-5, claude-haiku-4-5-20251001]
+    review_themes:              # review corpus -> theme shares + quotes + NPS proxy
+      model: claude-sonnet-5
+      prompt_version: themes_v1
+    monitor_memo:               # merchant health metrics -> investigation memo
+      model: claude-sonnet-5
+      prompt_version: monitor_v1
+
+scorecard:
+  # weights (one-line rationale each; policy/acceptable-use.md governs intent)
+  weights:
+    domain_age_under_30d: 30      # brand-new domains carry no history to trust
+    domain_age_under_180d: 15     # young but not newborn
+    missing_refund_policy: 20     # AUP-H1; predicts refund-refusal disputes
+    missing_shipping_policy: 10   # AUP-H2
+    missing_contact: 15           # AUP-H3; unreachable merchants convert to chargebacks
+    missing_terms: 5              # AUP-H4
+    no_tls: 10                    # AUP-H5
+    restricted_category: 25       # AUP-02 tier carries structural risk
+    review_nondelivery_over_20pct: 35  # AUP-04.ND strongest predictor
+    review_counterfeit_any: 40    # AUP-04.CF / AUP-01.7
+    review_refund_refusal_over_15pct: 20  # AUP-04.RR
+    review_subscription_trap: 15  # AUP-04.ST
+    geo_claim_inconsistency: 15   # claimed country vs signals mismatch
+  bands:
+    approve_max: 25
+    conditional_max: 50           # approve with limits + rolling reserve suggestion
+    manual_max: 79                # human underwriter review
+    # >= 80 -> decline
+  # hard overrides regardless of score:
+  #   any prohibited verdict -> decline
+  #   any insufficient-info verdict -> manual_review (fail-safe direction)
+
+monitor:
+  chargeback_warn: 0.015          # values illustrative, modeled on public monitoring-
+  chargeback_breach: 0.025        # program concepts, not any network's actual numbers
+  volume_zscore_alert: 3.0
+  ticket_drift_alert: 2.0
+  new_account_gmv_share_alert: 0.40

@@ -1,0 +1,31 @@
+[project]
+name = "merchant-risk-screener"
+version = "0.1.0"
+description = "Merchant underwriting pipeline for a BNPL platform: signal collection, Claude policy screening with quoted-evidence verification, transparent scorecard, decision records, and portfolio monitoring. Fixture merchants are fictional; fully reproducible offline."
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "anthropic>=0.40",
+    "pyyaml>=6.0",
+    "beautifulsoup4>=4.12",
+    "matplotlib>=3.9",
+    "requests>=2.32",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6", "tabulate>=0.9"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["collect", "screen", "score", "monitor", "llm"]
