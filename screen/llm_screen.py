@@ -65,7 +65,8 @@ def policy_screen(slug: str, site_text: str, *, model: str | None = None,
     if ver["missing"]:
         kept = []
         for v in out.get("verdicts", []):
-            if v.get("verdict") in ("restricted", "prohibited") and v.get("quote") in ver["missing"]:
+            flagged = v.get("verdict") in ("restricted", "prohibited")
+            if flagged and v.get("quote") in ver["missing"]:
                 v = {**v, "verdict": "insufficient-info",
                      "note": "quote failed verbatim verification; verdict voided (AUP-05.1)"}
             kept.append(v)
