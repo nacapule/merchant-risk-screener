@@ -1,0 +1,228 @@
+# Fixture merchant set — ground truth for the screener eval.
+# All merchants are FICTIONAL; sites/reviews are generated fixture material.
+# expected_decision ∈ {approve, conditional, manual_review, decline}
+# reason_codes reference policy/acceptable-use.md
+# site_brief/review_brief drive fixture generation (builder input, kept for provenance).
+
+merchants:
+  - slug: lumen-apparel
+    name: Lumen Apparel Co.
+    claimed_category: apparel
+    country: US
+    domain_age_days: 1130
+    expected_decision: approve
+    expected_reason_codes: []
+    site_brief: >
+      Clean mid-size clothing store. Full policy pages (refund 30d, shipping 3-5d,
+      contact with phone+address, ToS). ~40 products, coherent brand voice.
+    review_brief: >
+      60 reviews, 4.4 avg: fit/quality praise, a few sizing complaints, two slow-shipping
+      mentions, no fraud themes.
+
+  - slug: maya-ceramics
+    name: Maya Ceramics Studio
+    claimed_category: home_goods
+    country: MX
+    domain_age_days: 890
+    expected_decision: approve
+    expected_reason_codes: []
+    site_brief: >
+      Small handmade pottery studio, 15 products, complete but modest pages; ships from
+      Oaxaca, 1-2 week handmade lead times clearly stated.
+    review_brief: >
+      25 warm reviews 4.8 avg; "beautiful craftsmanship"; one broken-in-transit complaint
+      resolved with replacement.
+
+  - slug: casadecor-mx
+    name: CasaDecor MX
+    claimed_category: home_goods
+    country: MX
+    domain_age_days: 1500
+    expected_decision: approve
+    expected_reason_codes: []
+    site_brief: >
+      Spanish-language home décor store (tests bilingual screening). Complete policies in
+      Spanish, 60 products, physical showroom address in CDMX.
+    review_brief: >
+      45 reviews in Spanish, 4.3 avg, normal retail texture; delivery praise + two
+      customs-delay complaints.
+
+  - slug: bloom-stem
+    name: Bloom & Stem
+    claimed_category: florist
+    country: US
+    domain_age_days: 610
+    expected_decision: approve
+    expected_reason_codes: [AUP-H3]
+    site_brief: >
+      Florist with same-day local delivery. Refund + shipping pages fine; contact page has
+      email only — no phone (minor H3 note, not disqualifying).
+    review_brief: >
+      35 reviews 4.5 avg; freshness praise; one wilted-delivery complaint refunded.
+
+  - slug: technest-deals
+    name: TechNest Deals
+    claimed_category: electronics
+    country: US
+    domain_age_days: 240
+    expected_decision: conditional
+    expected_reason_codes: [AUP-H1, AUP-H2, AUP-02.5]
+    site_brief: >
+      Electronics reseller (refurb phones, earbuds, game keys section). Refund policy page
+      is a two-line stub, no shipping timeframes, prices notably below market. 8-month
+      domain.
+    review_brief: >
+      50 reviews 3.6 avg, mixed: bargains praised; several "took three weeks", two
+      "seal was broken", one "key didn't activate" (digital-goods restricted signal).
+
+  - slug: stellar-tickets
+    name: Stellar Tickets
+    claimed_category: event_tickets
+    country: US
+    domain_age_days: 950
+    expected_decision: conditional
+    expected_reason_codes: [AUP-02.1]
+    site_brief: >
+      Event ticket marketplace, decent hygiene (all pages present, TLS), clear fee
+      disclosure. Restricted category by nature: delivery-window risk.
+    review_brief: >
+      70 reviews 4.0 avg; mostly smooth; three "tickets arrived day-of" nail-biters, one
+      cancelled-event refund dispute.
+
+  - slug: pixelforge-games
+    name: PixelForge Games
+    claimed_category: digital_goods
+    country: US
+    domain_age_days: 780
+    expected_decision: conditional
+    expected_reason_codes: [AUP-02.5]
+    site_brief: >
+      Game-key and DLC storefront, well-built site, full policies, regional key
+      restrictions documented. Fraud-magnet category, good execution.
+    review_brief: >
+      80 reviews 4.2 avg; instant delivery praise; a few region-lock complaints; one
+      revoked-key complaint resolved.
+
+  - slug: flashfone-repairs
+    name: FlashFone Repairs
+    claimed_category: repair_services
+    country: US
+    domain_age_days: 420
+    expected_decision: conditional
+    expected_reason_codes: [AUP-02.6, AUP-H2]
+    site_brief: >
+      Phone repair with mail-in service and deposits. Sparse site: services list, prices,
+      contact email/phone; no shipping policy for mail-in flow; deposit terms vague.
+    review_brief: >
+      20 reviews 4.1 avg; fast-fix praise; one "held my phone two weeks" complaint.
+
+  - slug: quickdrop-gadgets
+    name: QuickDrop Gadgets
+    claimed_category: electronics
+    country: US
+    domain_age_days: 21
+    expected_decision: manual_review
+    expected_reason_codes: [AUP-02.7, AUP-H3, AUP-05.II]
+    site_brief: >
+      Three-week-old domain. Catalog of trending gadgets with stock photos, 4-6 week
+      shipping, no physical address, no phone, generic about-page prose. Dropship
+      signature all over.
+    review_brief: >
+      No reviews (empty corpus — insufficient info is part of the test).
+
+  - slug: titan-supps
+    name: Titan Supps
+    claimed_category: supplements
+    country: US
+    domain_age_days: 530
+    expected_decision: manual_review
+    expected_reason_codes: [AUP-02.4]
+    site_brief: >
+      Supplement store. Most products use "supports" language (passes), but two product
+      pages say "clinically proven to cure joint pain" and "reverses diabetes naturally"
+      (AUP-01.9-adjacent claims that must be caught and quoted).
+    review_brief: >
+      40 reviews 4.0 avg; taste/mixability chatter; one "didn't work" complaint; no
+      delivery issues.
+
+  - slug: heritage-watches
+    name: Heritage Watches
+    claimed_category: luxury_goods
+    country: US
+    domain_age_days: 150
+    expected_decision: manual_review
+    expected_reason_codes: [AUP-02.3, AUP-05.II]
+    site_brief: >
+      High-ticket watch dealer ($800-$12,000), 5-month domain, elegant site but no
+      authentication/provenance info, no physical address; consignment claims unverifiable.
+    review_brief: >
+      6 reviews 4.6 avg — too thin to clear the ticket size (insufficient-info lever).
+
+  - slug: aura-lux-bags
+    name: Aura Lux Bags
+    claimed_category: fashion_accessories
+    country: US
+    domain_age_days: 380
+    expected_decision: decline
+    expected_reason_codes: [AUP-01.7, AUP-04.CF]
+    site_brief: >
+      "Designer-inspired" handbags; product copy uses "LV-style", "inspired by Gucci",
+      "1:1 mirror quality" (counterfeit vocabulary that must be quoted as evidence).
+    review_brief: >
+      55 reviews 3.9 avg; several "looks just like the real one", two "customs seized my
+      order as counterfeit", one "logo peeled off".
+
+  - slug: giftcardhub-mx
+    name: GiftCardHub MX
+    claimed_category: gift_cards
+    country: MX
+    domain_age_days: 700
+    expected_decision: decline
+    expected_reason_codes: [AUP-01.6]
+    site_brief: >
+      Discounted gift-card resale (retail, gaming, streaming). Clean site, full policies —
+      the point: hygiene cannot rescue a prohibited category.
+    review_brief: >
+      90 reviews 4.3 avg; "codes arrive instantly"; a few "card had zero balance"
+      complaints (category-typical fraud texture).
+
+  - slug: greenleaf-wellness
+    name: GreenLeaf Wellness
+    claimed_category: wellness
+    country: US
+    domain_age_days: 460
+    expected_decision: decline
+    expected_reason_codes: [AUP-01.3]
+    site_brief: >
+      CBD tinctures, gummies, "full-spectrum" oils; wellness framing, lab-report links.
+      Prohibited regardless of polish.
+    review_brief: >
+      65 reviews 4.5 avg; sleep/anxiety anecdotes (some cross into medical-claim
+      territory: "cured my insomnia").
+
+  - slug: nova-vape
+    name: Nova Vape Lounge
+    claimed_category: vape
+    country: US
+    domain_age_days: 820
+    expected_decision: decline
+    expected_reason_codes: [AUP-01.2]
+    site_brief: >
+      Vape hardware + e-liquid storefront with age-gate splash. Prohibited category.
+    review_brief: >
+      30 reviews 4.2 avg; flavor chatter; one underage-sale accusation (aggravating).
+
+  - slug: urban-threads-outlet
+    name: Urban Threads Outlet
+    claimed_category: apparel
+    country: US
+    domain_age_days: 540
+    expected_decision: decline
+    expected_reason_codes: [AUP-04.ND, AUP-04.RR]
+    site_brief: >
+      Apparel outlet, superficially normal site with all policy pages present — the
+      point: reputational evidence overrides adequate hygiene.
+    review_brief: >
+      120 reviews 2.1 avg, complaint velocity rising in the recent half: dominant themes
+      "never arrived" (~30% of recent), "no refund answer", "support ghosted me";
+      scattered older positives.
