@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "780ff6f60ac23c88c9324972f81d40ef8a2da54dec5baa48da4852abc4d6a182",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 78073,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\"section\": \"AUP-01\", \"verdict\": \"pass\",\n     \"quote\": \"Mini projector \u2014 $59 Smart posture band \u2014 $34 Galaxy star lamp \u2014 $27 Ice maker \u2014 $89\",\n     \"note\": \"Product mix is ordinary consumer electronics/gadgets with no evidence of any AUP-01 prohibited category.\"},\n\n    {\"section\": \"AUP-02.7\", \"verdict\": \"restricted\",\n     \"quote\": \"Ships from our partner facilities in 4\u20136 weeks.\",\n     \"note\": \"Bare price-list catalog with no product descriptions, 4\u20136 week fulfillment from unnamed 'partner facilities,' and no physical address matches the dropshipping-signature pattern requiring fulfillment-evidence review.\"},\n\n    {\"section\": \"AUP-H1\", \"verdict\": \"restricted\",\n     \"quote\": \"index \u00b7 about\",\n     \"note\": \"Site navigation lists only an index and about page \u2014 no refund/return policy page exists anywhere in the site.\"},\n\n    {\"section\": \"AUP-H2\", \"verdict\": \"pass\",\n     \"quote\": \"Ships from our partner facilities in 4\u20136 weeks.\",\n     \"note\": \"A shipping timeframe is explicitly stated, even though it is embedded in marketing copy rather than a dedicated policy page.\"},\n\n    {\"section\": \"AUP-H3\", \"verdict\": \"restricted\",\n     \"quote\": \"index \u00b7 about\",\n     \"note\": \"No email, phone, or physical address appears anywhere on either page; the two-page nav confirms there is no contact page.\"},\n\n    {\"section\": \"AUP-H4\", \"verdict\": \"restricted\",\n     \"quote\": \"index \u00b7 about\",\n     \"note\": \"No terms-of-service page exists in the site's two-page navigation or content.\"},\n\n    {\"section\": \"AUP-H6\", \"verdict\": \"pass\",\n     \"quote\": \"\u00a9 2026 QuickDrop Gadgets \u2014 all merchants on this fixture set are fictional.\",\n     \"note\": \"Business name and footer identity are identical and consistent across both pages.\"}\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"QuickDrop Gadgets is a bare two-page site (index + about) selling generic viral gadgets. No AUP-01 category evidence. Matches AUP-02.7 dropshipping signature: undifferentiated price-list catalog, 4\u20136 week shipping from unnamed partner facilities, no physical address. Hygiene gaps: no refund policy, no contact info, no terms of service; only a shipping timeframe and consistent business identity are present.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

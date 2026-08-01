@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "a5b20325c60699c4612d24e600a9b2150c7f32cc37cfa69c55e10d69961e5c14",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 29708,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-02.5\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Delivery is instant to your account library and email.\",\n      \"note\": \"Merchant sells instant-delivery game keys and DLC, a digital-goods/game-key category requiring velocity caps.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy is present and findable, with added revoked-key replacement terms.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier.\",\n      \"note\": \"Shipping policy with stated timeframes is present.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@pixelforge-games.example \u00b7 Phone: (555) 010-3769\",\n      \"note\": \"Email and phone contact both present, exceeding the email-plus-one requirement.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present on the policies page.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"PixelForge Games\",\n      \"note\": \"Business name is consistent across index, about, contact, and policies pages.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Digital game-key/DLC reseller; hygiene is solid (refund, shipping, contact, ToS all present and consistent). No AUP-01 prohibited-category signals in site text. Falls under AUP-02.5 digital goods/game keys \u2014 restricted pending velocity-cap conditions.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

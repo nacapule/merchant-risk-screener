@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "31edeb09ce1804ea54013707d244bc2cae2e2b698d1024c3a6ffd6f9f6f5cade",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 6.6e-05,
+  "duration_ms": 35439,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-02.6\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Mail-in service: $25 deposit, quote before work\",\n      \"note\": \"Repair service collects a deposit before work/quote is finalized, matching the AUP-02.6 deposit-and-disappear condition.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@flashfone-repairs.example \u00b7 Phone: (612) 555-0142 \u00b7 88 Lyndale Ave S\",\n      \"note\": \"Email plus phone and physical address are both present and findable on the contact page.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Tel (612) 555-0142, 88 Lyndale Ave S.\",\n      \"note\": \"Business name, phone number, and address match exactly between the about and contact pages.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Legitimate phone repair shop (screen/battery repair, in-store and mail-in) with consistent contact info across pages. Mail-in service charges a $25 deposit before a quote, triggering AUP-02.6 deposit-and-disappear condition. No refund/return policy, shipping-timeframe, or terms-of-service text found on the pages provided; those hygiene gaps are unscored here for lack of quotable text but should factor into scorecard weighting.\"\n}\n```\n\nNote: no refund/return, shipping-timeframe, or terms-of-service text appeared anywhere in the supplied site text, so I couldn't produce quote-backed verdicts for AUP-H1/H2/H4 \u2014 flagged only in the summary rather than as unsupported verdict entries."
+ },
+ "task": "policy_screen"
+}

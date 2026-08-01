@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "1de2cee59081f3423f32e7647aec71ba131b3068aae75a6908c6cd1b277c0c2b",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 6.6e-05,
+  "duration_ms": 60931,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Overstock and open-box electronics. Warehouse direct.\",\n      \"note\": \"Product mix (renewed phones, earbuds, action cams, game keys) shows no evidence of any AUP-01 prohibited category.\"\n    },\n    {\n      \"section\": \"AUP-02.5\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"GAME KEYS: latest releases from $19 \u2014 instant email delivery\",\n      \"note\": \"Instant-delivery digital game keys are a fraud-magnet, zero-marginal-cost category requiring velocity caps.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Refunds Contact us about refunds.\",\n      \"note\": \"The refunds page states no actual terms (window, conditions) and only directs the buyer to contact support.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"All sales ship from our warehouse.\",\n      \"note\": \"Shipping is mentioned but no timeframe/window is stated anywhere in the site text.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Email: support@technest-deals.example\",\n      \"note\": \"Only an email address is provided; no phone number or physical address appears on the contact page.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"index \u00b7 about \u00b7 policies \u00b7 contact\",\n      \"note\": \"Site navigation (identical on every page) lists no terms-of-service page anywhere in the site.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"\u00a9 2026 TechNest Deals \u2014 all merchants on this fixture set are fictional.\",\n      \"note\": \"Business name and footer identity are identical and consistent across all four pages.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Electronics reseller (renewed phones, earbuds, action cams) also sells instant-delivery game keys, triggering AUP-02.5 restricted (velocity cap). No prohibited-category evidence. Hygiene gaps: refund page has no real terms (H1), no shipping timeframe (H2), email-only contact (H3), no ToS page (H4). Business identity consistent (H6 pass).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

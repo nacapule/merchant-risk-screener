@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "383681a13145c458e5483dbe29ba9e8b0cf9ef304c8c89e3e25d6e16a47a02cc",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 5.1e-05,
+  "duration_ms": 24852,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 3,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-02.1\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"some venues release paper tickets only 48h before the event \u2014 we say so on the listing\",\n      \"note\": \"Event-ticket resale marketplace with disclosed delivery-window risk (paper tickets released only 48h pre-event); condition per AUP-02.1 is a rolling reserve.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy present and findable.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n      \"note\": \"Shipping policy with stated timeframes present.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@stellar-tickets.example \u00b7 Phone: (555) 010-7104\",\n      \"note\": \"Email and phone contact both present.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Stellar Tickets \u2014 about\",\n      \"note\": \"Business name (Stellar Tickets) and jurisdiction (US) consistent across index, about, policies, and contact pages.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Ticket resale marketplace (AUP-02.1) with disclosed delivery-window risk for paper tickets. No AUP-01 prohibited content found. Hygiene complete: refund, shipping, contact, terms, and consistent business identity all present. TLS not evidenced in text. Recommend restricted approval with rolling reserve per AUP-02.1.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

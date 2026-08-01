@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "83572fa1e86713d0352757526f1ff5263c9d62c910990052da93f3cc2b3aa450",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 5.1e-05,
+  "duration_ms": 27128,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 3,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\"section\": \"AUP-01\", \"verdict\": \"pass\",\n     \"quote\": \"Hand-thrown stoneware from our Oaxaca workshop.\",\n     \"note\": \"Products are handmade ceramics; no prohibited-category goods evidenced.\"},\n    {\"section\": \"AUP-02\", \"verdict\": \"pass\",\n     \"quote\": \"Made-to-order pieces ship in 1\u20132 weeks \u2014 handmade takes time and we say so up front.\",\n     \"note\": \"Made-to-order fulfillment window is under the 3-week AUP-02.2 threshold; not luxury-ticket or dropshipping-signature.\"},\n    {\"section\": \"AUP-H1\", \"verdict\": \"pass\",\n     \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n     \"note\": \"Refund/return policy present and findable.\"},\n    {\"section\": \"AUP-H2\", \"verdict\": \"pass\",\n     \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier.\",\n     \"note\": \"Shipping policy states timeframes.\"},\n    {\"section\": \"AUP-H3\", \"verdict\": \"pass\",\n     \"quote\": \"Email: support@maya-ceramics.example \u00b7 Phone: (555) 010-6553\",\n     \"note\": \"Email and phone contact both present.\"},\n    {\"section\": \"AUP-H4\", \"verdict\": \"pass\",\n     \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of MX.\",\n     \"note\": \"Terms of service present.\"},\n    {\"section\": \"AUP-H6\", \"verdict\": \"pass\",\n     \"quote\": \"Maya Ceramics Studio \u2014 all merchants on this fixture set are fictional.\",\n     \"note\": \"Business name and MX jurisdiction consistent across about, contact, index, and policies pages.\"}\n  ],\n  \"overall\": \"pass\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Family-run Oaxacan ceramics studio selling stoneware cups and bowls; no prohibited/restricted category signals. Full hygiene present: refund policy, shipping timeframes, email+phone contact, terms of service, and consistent MX-based business identity across all pages. Made-to-order window (1\u20132 weeks) is well under the AUP-02.2 restricted threshold.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

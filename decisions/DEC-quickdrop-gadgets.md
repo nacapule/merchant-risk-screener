@@ -1,6 +1,6 @@
 # DEC-quickdrop-gadgets — QuickDrop Gadgets
 
-**Decision: MANUAL_REVIEW** · score 115 · reason codes: AUP-05.II, AUP-02.7, AUP-H1, AUP-H2, AUP-H3, AUP-H4, AUP-H5, AUP-02
+**Decision: DECLINE** · score 115 · reason codes: AUP-02.7, AUP-H1, AUP-H2, AUP-H3, AUP-H4, AUP-H5, AUP-02
 
 ## Application
 Claimed category: electronics · country US · domain age 21d · TLS MISSING
@@ -9,15 +9,13 @@ Claimed category: electronics · country US · domain age 21d · TLS MISSING
 Category: electronics (confidence 0.97) · overall: restricted · NPS proxy: 0
 
 Verdicts with evidence:
-- **AUP-01 → pass** No weapons, tobacco, cannabis, adult, gambling, crypto, counterfeit, MLM, medical-claim, or credential/document listings appear in the provided site text.
-- **AUP-02.7 → restricted** — "Ships from our partner facilities in 4–6 weeks." Unnamed 'partner facilities', 4–6 week fulfillment, and stock-photo-style generic gadget catalog with no physical address match the dropshipping-signature pattern.
-- **AUP-H1 → insufficient-info** No refund or return policy text is present anywhere in the provided about/index pages.
-- **AUP-H2 → pass** — "Ships from our partner facilities in 4–6 weeks." A shipping timeframe is explicitly stated, satisfying minimal hygiene presence even though it also triggers AUP-02.7.
-- **AUP-H3 → insufficient-info** No email, phone number, or physical address appears in the provided site text.
-- **AUP-H4 → insufficient-info** No terms-of-service content or link is present in the provided pages.
-- **AUP-H5 → insufficient-info** Checkout/TLS security cannot be assessed from the provided page text.
-- **AUP-H6 → pass** — "QuickDrop Gadgets" Business name is used consistently across the about and index pages and in both copyright lines.
-- **AUP-01.9 → pass** No disease-treatment or cure claims found; the 'Smart posture band' listing carries no structure/function or medical language.
+- **AUP-01 → pass** — "Mini projector — $59 Smart posture band — $34 Galaxy star lamp — $27 Ice maker — $89" Product mix is ordinary consumer electronics/gadgets with no evidence of any AUP-01 prohibited category.
+- **AUP-02.7 → restricted** — "Ships from our partner facilities in 4–6 weeks." Bare price-list catalog with no product descriptions, 4–6 week fulfillment from unnamed 'partner facilities,' and no physical address matches the dropshipping-signature pattern requiring fulfillment-evidence review.
+- **AUP-H1 → restricted** — "index · about" Site navigation lists only an index and about page — no refund/return policy page exists anywhere in the site.
+- **AUP-H2 → pass** — "Ships from our partner facilities in 4–6 weeks." A shipping timeframe is explicitly stated, even though it is embedded in marketing copy rather than a dedicated policy page.
+- **AUP-H3 → restricted** — "index · about" No email, phone, or physical address appears anywhere on either page; the two-page nav confirms there is no contact page.
+- **AUP-H4 → restricted** — "index · about" No terms-of-service page exists in the site's two-page navigation or content.
+- **AUP-H6 → pass** — "© 2026 QuickDrop Gadgets — all merchants on this fixture set are fictional." Business name and footer identity are identical and consistent across both pages.
 
 ## Scorecard breakdown
 | factor | points | code | why |
@@ -30,4 +28,5 @@ Verdicts with evidence:
 | no_tls | 10 | AUP-H5 | TLS absent/broken |
 | restricted_category | 25 | AUP-02 | category electronics is restricted-tier |
 
-**Hard overrides:** insufficient-info verdict (AUP-05.II)
+## What would change this decision
+Removal of the prohibited content/category, or (for reputational declines) a sustained reversal of the non-delivery/refund-refusal pattern over 90+ days on another processor, with evidence.

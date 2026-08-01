@@ -1,23 +1,21 @@
 # DEC-technest-deals — TechNest Deals
 
-**Decision: MANUAL_REVIEW** · score 65 · reason codes: AUP-05.II, AUP-H4, AUP-02, AUP-04.ND
+**Decision: MANUAL_REVIEW** · score 65 · reason codes: AUP-H4, AUP-02, AUP-04.ND
 
 ## Application
 Claimed category: electronics · country US · domain age 240d · TLS ok
 
 ## LLM screening (advisory)
-Category: electronics (confidence 0.95) · overall: insufficient-info · NPS proxy: 16
+Category: electronics (confidence 0.95) · overall: restricted · NPS proxy: 16
 
 Verdicts with evidence:
-- **AUP-01 → pass** — "Overstock and open-box electronics. Warehouse direct." No weapons, tobacco, cannabis, adult, gambling, crypto/gift-card, counterfeit, MLM, medical-claims, or credential content appears in the provided text.
-- **AUP-01.7 → pass** — "Why so cheap? We buy overstock and open-box lots." Discount is explained by liquidation/open-box sourcing, not counterfeit/replica language, so no counterfeit trigger.
-- **AUP-02.5 → restricted** — "GAME KEYS: latest releases from $19 — instant email delivery" Digital game-key resale with instant delivery is a fraud-magnet category requiring velocity caps per AUP-02.5.
-- **AUP-H1 → insufficient-info** — "Refunds Contact us about refunds." A refund page exists but states no actual policy terms (timeframe, conditions, process), so it does not satisfy AUP-H1 as findable policy content.
-- **AUP-H2 → insufficient-info** — "All sales ship from our warehouse." Only shipping origin is stated; no delivery timeframe is given anywhere in the provided text, so AUP-H2 cannot be confirmed.
-- **AUP-H3 → insufficient-info** — "Contact Email: support@technest-deals.example" Only an email address is provided; no phone or physical address appears, so the email-plus-one-other requirement is unmet.
-- **AUP-H4 → insufficient-info** No terms-of-service text or page appears among about/contact/index/policies content.
-- **AUP-H5 → insufficient-info** No TLS/checkout security information is present in the provided site text.
-- **AUP-H6 → pass** — "© 2026 TechNest Deals — all merchants on this fixture set are fictional." Identical brand name and footer appear consistently across all four pages.
+- **AUP-01 → pass** — "Overstock and open-box electronics. Warehouse direct." Product mix (renewed phones, earbuds, action cams, game keys) shows no evidence of any AUP-01 prohibited category.
+- **AUP-02.5 → restricted** — "GAME KEYS: latest releases from $19 — instant email delivery" Instant-delivery digital game keys are a fraud-magnet, zero-marginal-cost category requiring velocity caps.
+- **AUP-H1 → restricted** — "Refunds Contact us about refunds." The refunds page states no actual terms (window, conditions) and only directs the buyer to contact support.
+- **AUP-H2 → restricted** — "All sales ship from our warehouse." Shipping is mentioned but no timeframe/window is stated anywhere in the site text.
+- **AUP-H3 → restricted** — "Email: support@technest-deals.example" Only an email address is provided; no phone number or physical address appears on the contact page.
+- **AUP-H4 → restricted** — "index · about · policies · contact" Site navigation (identical on every page) lists no terms-of-service page anywhere in the site.
+- **AUP-H6 → pass** — "© 2026 TechNest Deals — all merchants on this fixture set are fictional." Business name and footer identity are identical and consistent across all four pages.
 
 Review themes (verbatim, verified):
 - [non_delivery] "Took three weeks to arrive with zero updates."
@@ -31,5 +29,3 @@ Review themes (verbatim, verified):
 | missing_terms | 5 | AUP-H4 | no terms of service |
 | restricted_category | 25 | AUP-02 | category electronics is restricted-tier |
 | review_nondelivery_over_20pct | 35 | AUP-04.ND | non-delivery theme share 34% |
-
-**Hard overrides:** insufficient-info verdict (AUP-05.II)

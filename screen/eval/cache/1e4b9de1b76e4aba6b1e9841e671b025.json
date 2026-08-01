@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "6cdc119b43b923f40619694d99999ba1116a0fb5ff240d6f11c290f4ceef3cf3",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 85016,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Cat\u00e1logo Decoraci\u00f3n para el hogar: l\u00e1mparas artesanales, textiles de Chiapas, espejos de hojalata.\",\n      \"note\": \"Catalog is licit home-decor goods (lamps, textiles, mirrors); no prohibited-category content present.\"\n    },\n    {\n      \"section\": \"AUP-02\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Showroom: C\u00f3rdoba 87, Roma Norte, CDMX.\",\n      \"note\": \"Named showroom address and standard-priced named products contradict dropshipping-signature/high-ticket/pre-order restricted patterns.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Devoluciones dentro de 30 d\u00edas. Reembolso al m\u00e9todo de pago original.\",\n      \"note\": \"Refund/return policy is present and findable on the index page.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Env\u00edo: 3\u20137 d\u00edas h\u00e1biles con gu\u00eda rastreable.\",\n      \"note\": \"Shipping policy states a concrete timeframe (3\u20137 business days) with tracking.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Tel +52 55 5525 1187\",\n      \"note\": \"Phone and showroom address are present, but no email address appears anywhere in the site text, so the email-plus-one-channel requirement is not met.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"CasaDecor MX\",\n      \"note\": \"Business name is consistent across about.html and index.html with a single stated CDMX jurisdiction.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Legitimate home-decor retailer (lamps, textiles, mirrors) with a real showroom address, refund policy, and dated shipping timeframe \u2014 no AUP-01/02 category concerns. One hygiene gap: no email address found in site text (AUP-H3), only phone/address, so verdict is restricted pending contact-info confirmation; ToS presence not evidenced in provided pages.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}
