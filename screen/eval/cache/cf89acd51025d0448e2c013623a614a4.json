@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "d42119b1dc6c7edc20982df584e46b12461c223ca62efa7e9d33e328be3c0a59",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 31677,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"signals_observed\": [\n    \"30d chargeback rate = 2.27% (AUP-06.1 warn threshold)\",\n    \"Volume z-score = 3.0 vs baseline (AUP-06.2 trigger)\",\n    \"New buyer share = 0.0 (100% of recent volume from existing/repeat buyers)\",\n    \"Ticket size drift = 1.07x baseline (7% increase, roughly flat)\"\n  ],\n  \"hypotheses\": [\n    {\n      \"kind\": \"bustout\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"Bust-out ramps typically pair volume spikes with rising new_share (fresh, thin buyer accounts) and escalating ticket size; here new_share is 0.0 and ticket_drift is nearly flat, which doesn't fit the extraction pattern.\"\n    },\n    {\n      \"kind\": \"seasonal_spike\",\n      \"likelihood\": \"med\",\n      \"reasoning\": \"A 3-sigma volume jump driven entirely by repeat buyers with stable ticket size is consistent with a seasonal demand surge among the existing customer base.\"\n    },\n    {\n      \"kind\": \"marketing_push\",\n      \"likelihood\": \"med\",\n      \"reasoning\": \"A promotion targeting existing customers (e.g. loyalty discount) would produce the same signature: volume up, new_share unchanged, tickets flat.\"\n    },\n    {\n      \"kind\": \"data_issue\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"new_share landing at exactly 0.0 is a suspicious round number and could reflect a broken new-buyer flag rather than a true zero.\"\n    }\n  ],\n  \"recommended_action\": \"monitor\",\n  \"evidence_gaps\": [\n    \"Confirm new_share=0.0 against raw new-vs-returning buyer counts (rule out pipeline defect)\",\n    \"Check marketing/promo calendar for a campaign coinciding with 2026-06-18\",\n    \"Pull ticket-size distribution by buyer cohort to confirm no escalation is masked in aggregate drift\",\n    \"Re-check cb_rate_30d in 60-90 days once dispute lag clears, since current 2.3% may understate true risk if this is an early bust-out\"\n  ],\n  \"memo_markdown\": \"**Merchant 123 \u2014 AUP-06 Review (2026-06-18)**\\n\\nVolume spiked 3\u03c3 above baseline with a mild chargeback warn (2.3%), but the composition argues against bust-out: new buyer share is 0.0% (all volume from repeat customers) and ticket size is essentially flat (1.07x). Classic bust-out ramps show rising new_share and escalating tickets alongside volume growth \u2014 neither is present here.\\n\\nMost likely benign: a seasonal or promotional spike among existing customers. One caveat \u2014 new_share reading exactly 0.0 is unusually clean and merits a data-quality check before ruling out an undercount.\\n\\n**Recommendation:** monitor next window; no reserve or settlement action warranted on current evidence. Revisit chargeback rate in 60-90 days once dispute lag clears, and verify the new_share field isn't defaulting incorrectly.\"\n}\n```"
+ },
+ "task": "monitor_memo"
+}

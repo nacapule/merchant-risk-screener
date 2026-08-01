@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "4d9dfa51378a1e9658b56c89f61738f3bede3eafbc6806b0b73fc8c3092026d7",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 48743,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Licensed resale marketplace; seller verification since 2023.\",\n      \"note\": \"No content matches any AUP-01 prohibited category; this is licensed ticket resale, not counterfeit or otherwise banned goods.\"\n    },\n    {\n      \"section\": \"AUP-02.1\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"some venues release paper tickets only 48h before the event \u2014 we say so on the listing.\",\n      \"note\": \"Event-ticket marketplace with explicit delivery-window exposure; AUP-02.1 applies, condition = rolling reserve.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy present and findable on policies.html.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n      \"note\": \"Shipping policy with stated timeframes present.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@stellar-tickets.example \u00b7 Phone: (555) 010-7104\",\n      \"note\": \"Email and phone present, satisfying AUP-H3; the referenced address is not actually listed on the about page (see AUP-H6).\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present.\"\n    },\n    {\n      \"section\": \"AUP-H5\",\n      \"verdict\": \"insufficient-info\",\n      \"quote\": \"\",\n      \"note\": \"No TLS/HTTPS evidence appears anywhere in the provided site text; cannot assess checkout security from text alone.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"insufficient-info\",\n      \"quote\": \"See about page for our address.\",\n      \"note\": \"Contact page promises an address on the about page, but about.html contains no address \u2014 incomplete/broken identity information.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Stellar Tickets is a licensed event-ticket resale marketplace; no AUP-01 prohibited-category matches. Falls under AUP-02.1 (event tickets: delivery-window risk, e.g. paper tickets released only 48h pre-event) \u2014 restricted, rolling reserve recommended. Refund/shipping/terms/contact hygiene present (AUP-H1\u2013H4 pass). TLS unverifiable from text (AUP-H5); promised address on about page is missing (AUP-H6).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "1a85ade69b306aca0b2a158cfa9718ffda210359554a97bb9dedb720a9f0b554",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 61284,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.34,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.18,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.48\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.40,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.08,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.52\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"non_delivery\", \"quote\": \"Took three weeks to arrive with zero updates.\", \"date\": \"2026-05-22\"},\n    {\"theme\": \"quality\", \"quote\": \"The seal was broken on the box and the charger was missing.\", \"date\": \"2026-03-15\"},\n    {\"theme\": \"quality\", \"quote\": \"Game key didn't activate, support took a week to replace it.\", \"date\": \"2026-01-21\"},\n    {\"theme\": \"positive\", \"quote\": \"Phone was genuinely like new, unbeatable price.\", \"date\": \"2026-06-16\"},\n    {\"theme\": \"positive\", \"quote\": \"Good deal on the earbuds, packaging was generic but they work.\", \"date\": \"2026-05-03\"}\n  ],\n  \"nps_proxy\": 16,\n  \"summary\": \"Reviews split between strong positive sentiment (phones, refurb value) and recurring operational pain: slow/non-delivery complaints and product-quality defects (broken seals, dead game keys). No counterfeit, refund-refusal, or subscription-trap signals. Recent half shows improving NPS (+20% vs +8% prior) despite non-delivery share rising to 40%, driven by phone-praise volume outweighing shipping gripes.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

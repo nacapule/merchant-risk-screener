@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "147b5dee020edf9dd8c848dd8d586ab256ca0957782b1aac5892cf50c74f58a1",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 1.5e-05,
+  "duration_ms": 10864,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 1,
+  "text": "```json\n{\n  \"category\": \"electronics\",\n  \"mcc_guess\": {\n    \"code\": \"5732\",\n    \"name\": \"Electronics Stores\"\n  },\n  \"confidence\": 0.97,\n  \"evidence_quote\": \"Viral gadgets at factory prices.\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

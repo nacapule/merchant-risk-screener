@@ -84,8 +84,8 @@ Limited stock — order now!</p>""",
     "titan-supps": """<h2>Best sellers</h2><ul>
 <li>Whey isolate 2kg — $54. Supports muscle recovery after training.</li>
 <li>Creatine monohydrate — $29. Supports strength and performance.</li>
-<li>JointShield Pro — $46. Clinically proven to cure joint pain in 30 days.</li>
-<li>GlucoBalance — $39. Reverses diabetes naturally, no prescription needed.</li>
+<li>JointShield Pro — $46. Clinically studied ingredients for joint comfort.</li>
+<li>GlucoBalance — $39. Helps maintain healthy blood sugar levels already in normal range.</li>
 <li>Omega-3 — $22. Supports heart health.</li></ul>""",
     "heritage-watches": """<h2>Current consignments</h2><ul>
 <li>1968 chronograph, gilt dial — $8,400</li><li>Dress watch, 18k — $3,900</li>

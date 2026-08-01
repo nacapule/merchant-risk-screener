@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "b2a6508fd7941d41fb10612bddc3ac640017357ec097ed6511eef889dea3dfbc",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 68098,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.62,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.47,\n    \"quality\": 0.10,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.28\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.92,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.64,\n    \"quality\": 0.08,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.0\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Bought last year, good prices back then.\", \"date\": \"2025-07-17\"},\n    {\"theme\": \"quality\", \"quote\": \"Sizing was wrong and returns page just loops, gave up.\", \"date\": \"2026-01-31\"},\n    {\"theme\": \"refund_refusal\", \"quote\": \"Never got my package and they refuse to refund, avoid this store.\", \"date\": \"2026-01-31\"},\n    {\"theme\": \"non_delivery\", \"quote\": \"Ordered six weeks ago and it never arrived. Support ghosted me.\", \"date\": \"2026-02-01\"},\n    {\"theme\": \"refund_refusal\", \"quote\": \"One hoodie of three arrived. No refund answer for the missing two.\", \"date\": \"2026-02-21\"}\n  ],\n  \"nps_proxy\": -63,\n  \"summary\": \"Reviews were positive on price/delivery through Jan 2026, then flipped sharply after 2026-01-31 to dominant non-delivery and refund-refusal complaints, plus some sizing/quality issues. Recent half is almost entirely negative (NPS -100), pulling weighted NPS to -63. No counterfeit or subscription-trap signals.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

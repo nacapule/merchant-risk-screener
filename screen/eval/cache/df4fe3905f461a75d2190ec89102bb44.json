@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "966a3e2a148772b94dd1865b247a2aedfa89b7a5a7276aa4e1527bb3195f7564",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 2.5e-05,
+  "duration_ms": 6788,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 3,
+  "text": "```json\n{\n  \"category\": \"home_goods\",\n  \"mcc_guess\": {\n    \"code\": \"5719\",\n    \"name\": \"Miscellaneous Home Furnishing Specialty Shops\"\n  },\n  \"confidence\": 0.95,\n  \"evidence_quote\": \"Decoraci\u00f3n para el hogar: l\u00e1mparas artesanales, textiles de Chiapas, espejos de hojalata\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

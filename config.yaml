@@ -23,7 +23,7 @@ llm:
       prompt_version: categorize_v1
     policy_screen:              # site text vs AUP-1 -> per-section verdicts w/ quotes
       model: claude-sonnet-5
-      prompt_version: screen_v1
+      prompt_version: screen_v2
       eval_arms: [claude-sonnet-5, claude-haiku-4-5-20251001]
     review_themes:              # review corpus -> theme shares + quotes + NPS proxy
       model: claude-sonnet-5

@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "c6b65d87d9c63f333d7306e012f0a6880196d49a7b78f5be2f5f7904a3b87f80",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3e-05,
+  "duration_ms": 8189,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"category\": \"vape\",\n  \"mcc_guess\": {\n    \"code\": \"5652\",\n    \"name\": \"Tobacco shop\"\n  },\n  \"confidence\": 0.95,\n  \"evidence_quote\": \"Independent vape shop since 2019\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

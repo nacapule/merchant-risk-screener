@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "a68d0748c7c74bc6bf475060db2b415ebd1c43c9689ac281895b833b02e669eb",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3e-05,
+  "duration_ms": 12531,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"category\": \"digital_goods\",\n  \"mcc_guess\": {\n    \"code\": \"5734\",\n    \"name\": \"Computer Software Stores\"\n  },\n  \"confidence\": 0.95,\n  \"evidence_quote\": \"Instant keys AAA new releases \u2014 $59.99\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

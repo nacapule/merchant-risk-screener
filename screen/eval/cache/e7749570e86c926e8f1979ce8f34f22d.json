@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "9e103067537eb0655a1f60bdf8fe001c3530ad44bace825db2e4fb1ec1c8e816",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 58381,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.37,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.63\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.33,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.67\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Flowers arrived fresh and gorgeous, made her whole week.\", \"date\": \"2026-06-07\"},\n    {\"theme\": \"positive\", \"quote\": \"Same-day delivery saved my anniversary.\", \"date\": \"2026-02-02\"},\n    {\"theme\": \"quality\", \"quote\": \"Delivery was on time, arrangement slightly smaller than the photo.\", \"date\": \"2026-06-19\"},\n    {\"theme\": \"quality\", \"quote\": \"Bouquet arrived wilted; they refunded after I sent a photo.\", \"date\": \"2026-03-24\"}\n  ],\n  \"nps_proxy\": 78,\n  \"summary\": \"Strongly positive floral merchant; most reviews praise freshness and on-time/same-day delivery. Recurring minor quality theme: arrangements sometimes smaller than photos (rated 4) and occasional wilted bouquets that were promptly refunded (rated 2). No non-delivery, counterfeit, refusal, or subscription issues found.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

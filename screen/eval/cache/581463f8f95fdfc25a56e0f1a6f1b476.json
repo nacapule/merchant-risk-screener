@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "bf47fd62483772a18800acde5ed98dab677472380785cc7e7d3bc186c7bfe4f3",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3e-05,
+  "duration_ms": 10456,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"category\": \"apparel\",\n  \"mcc_guess\": {\n    \"code\": \"5651\",\n    \"name\": \"Family Clothing Stores\"\n  },\n  \"confidence\": 0.95,\n  \"evidence_quote\": \"Denim from $19 Hoodies from $24 Sneakers from $39\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

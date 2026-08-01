@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "95ffc524134a7d9501c97962d9c49b98a4ce0b68ecf719dcdb39b0cd32c13081",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 68066,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.111,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.067,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.822\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.091,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.909\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"La l\u00e1mpara lleg\u00f3 perfecta, empaque muy cuidado.\", \"date\": \"2026-06-03\"},\n    {\"theme\": \"positive\", \"quote\": \"Buena calidad, el env\u00edo tard\u00f3 una semana.\", \"date\": \"2026-05-25\"},\n    {\"theme\": \"quality\", \"quote\": \"El espejo lleg\u00f3 con un ray\u00f3n peque\u00f1o.\", \"date\": \"2026-03-27\"},\n    {\"theme\": \"non_delivery\", \"quote\": \"El tapete tard\u00f3 en llegar por aduana, pero lleg\u00f3 bien.\", \"date\": \"2025-09-24\"}\n  ],\n  \"nps_proxy\": 78,\n  \"summary\": \"Overwhelmingly positive reviews (lamp packaging praised, good quality/shipping). No counterfeit, refund-refusal, or subscription-trap signals. Older customs-delay complaints (tapete) have disappeared in recent reviews; isolated quality defects (scratched mirrors) emerged in Mar 2026. NPS proxy strong at ~78.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

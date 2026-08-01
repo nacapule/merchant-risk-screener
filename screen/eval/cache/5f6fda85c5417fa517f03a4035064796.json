@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "9f08e20ece4fc84243aca98cad97962ad0e4a89fcb29d92c72a4b88921c5ae3b",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3e-05,
+  "duration_ms": 7246,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"category\": \"electronics\",\n  \"mcc_guess\": {\n    \"code\": \"5734\",\n    \"name\": \"Computer and computer software and peripheral equipment and supplies stores\"\n  },\n  \"confidence\": 0.95,\n  \"evidence_quote\": \"Overstock and open-box electronics. Warehouse direct.\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

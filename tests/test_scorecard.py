@@ -34,12 +34,22 @@ def test_prohibited_overrides_perfect_hygiene() -> None:
     assert r.overrides
 
 
-def test_insufficient_info_forces_manual() -> None:
+def test_core_insufficient_info_forces_manual() -> None:
     screen = dict(CLEAN_SCREEN)
-    screen["verdicts"] = [{"section": "AUP-03", "verdict": "insufficient-info"}]
+    screen["verdicts"] = [{"section": "AUP-01", "verdict": "insufficient-info"}]
     r = score_merchant("thin", CFG, CLEAN_TECH, CLEAN_CONTENT, screen)
     assert r.decision == "manual_review"
     assert "AUP-05.II" in r.reason_codes
+
+
+def test_noncore_insufficient_info_does_not_override() -> None:
+    # v1->v2 lesson: a hygiene-section insufficient-info must not hijack an
+    # otherwise-clean merchant into manual review
+    screen = dict(CLEAN_SCREEN)
+    screen["verdicts"] = [{"section": "AUP-03", "verdict": "insufficient-info"},
+                          {"section": "AUP-01", "verdict": "pass"}]
+    r = score_merchant("cleanish", CFG, CLEAN_TECH, CLEAN_CONTENT, screen)
+    assert r.decision == "approve"
 
 
 def test_reputational_decline_despite_good_pages() -> None:

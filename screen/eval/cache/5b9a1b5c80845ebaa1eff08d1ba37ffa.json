@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "d9934e41c3d5d6221363cc8abf1bdb7610ddc754d3645c4247200fe196570daf",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 36960,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.08,\n    \"subscription_trap\": 0.0,\n    \"positive\": 1.0\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.154,\n    \"subscription_trap\": 0.0,\n    \"positive\": 1.0\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Arrived carefully packed, even more beautiful in person.\", \"date\": \"2025-07-15\"},\n    {\"theme\": \"positive\", \"quote\": \"Beautiful craftsmanship, you can feel the hand of the maker.\", \"date\": \"2025-07-18\"},\n    {\"theme\": \"positive\", \"quote\": \"Beautiful craftsmanship, you can feel the hand of the maker.\", \"date\": \"2026-05-17\"},\n    {\"theme\": \"quality\", \"quote\": \"One copita arrived chipped and they replaced it the same week.\", \"date\": \"2026-06-08\"},\n    {\"theme\": \"quality\", \"quote\": \"One copita arrived chipped and they replaced it the same week.\", \"date\": \"2026-06-23\"}\n  ],\n  \"nps_proxy\": 100,\n  \"summary\": \"All 25 reviews are promoters (rating 4-5); two flag a chipped item but note prompt replacement. No non-delivery, counterfeit, refund-refusal, or subscription complaints. Caution: only 3 distinct review texts repeat verbatim across 11 months \u2014 pattern consistent with templated or incentivized reviews, warranting authenticity check.\"\n}\n```\n\nNote: this corpus is unusually thin \u2014 only three distinct review strings repeated across 25 dated entries, several sharing the exact same wording verbatim (including two reviews on the identical date 2026-02-01). That's a pattern worth flagging for authenticity review independent of the theme scores above, since it could mask genuine signal either direction."
+ },
+ "task": "review_themes"
+}

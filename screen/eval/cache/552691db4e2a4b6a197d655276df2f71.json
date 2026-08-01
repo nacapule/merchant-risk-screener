@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "0ae64bd2d3a5aefd39700d0f4d08cceb7800a1f908ef1ba3319b275d969d3e9e",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 0.000126,
+  "duration_ms": 17442,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 8,
+  "text": "```json\n{\n  \"signals_observed\": [\n    \"AUP-06.1 breach: 30d chargeback rate 3.85% (cb_rate_30d=0.0385)\",\n    \"new_share=0.015 (1.5% of volume from new buyer accounts)\",\n    \"ticket_drift=0.97 (avg ticket ~3% below baseline, not inflating)\",\n    \"volume_z=-0.6 (volume running below baseline, not ramping)\"\n  ],\n  \"hypotheses\": [\n    {\n      \"kind\": \"bustout\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"Bust-out requires a volume/ticket ramp on thin new-buyer accounts; here volume is down (z=-0.6), new_share is low (1.5%), and tickets are flat-to-down (0.97) \u2014 the opposite of the ramp signature.\"\n    },\n    {\n      \"kind\": \"category_norm\",\n      \"likelihood\": \"med\",\n      \"reasoning\": \"An isolated cb_rate breach with no volume/ticket/new-buyer anomaly is consistent with this merchant's category simply running a higher baseline dispute rate, or normal variance around the threshold.\"\n    },\n    {\n      \"kind\": \"data_issue\",\n      \"likelihood\": \"med\",\n      \"reasoning\": \"Since disputes lag 60-90 days, a chargeback spike against declining current volume may reflect a stale/lagged cohort or an attribution artifact rather than live merchant behavior.\"\n    },\n    {\n      \"kind\": \"seasonal_spike\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"No volume or ticket lift is present, so a seasonal demand spike does not fit this pattern.\"\n    }\n  ],\n  \"recommended_action\": \"monitor\",\n  \"evidence_gaps\": [\n    \"Cohort-level cb attribution: are the chargebacks concentrated in a specific past order window (opened-date), consistent with lagged disputes rather than new fraud?\",\n    \"Category/peer baseline cb rate to see if 3.85% is anomalous or within normal range for this merchant's vertical\",\n    \"Confirm cb_rate_30d isn't a pipeline/data artifact (e.g., denominator shrinking as volume_z falls, inflating the rate)\"\n  ],\n  \"memo_markdown\": \"**Merchant 27 \u2014 AUP-06.1 chargeback breach (3.85% 30d)**\\n\\nThreshold breach is isolated: no bust-out ramp signature present. New-buyer share is low (1.5%), avg ticket is flat-to-down (0.97x), and volume is below baseline (z=-0.6) \u2014 inconsistent with the volume/ticket/new-account ramp that defines a bust-out. More likely explanations: category-normal dispute variance, or a lagged-cohort/data attribution effect given the 60-90 day dispute lag against declining current volume.\\n\\nNo corroborating fraud evidence exists to justify holding payouts. Recommend **monitor** next window, with a quick check on cohort-level cb attribution (opened-date) and category peer baseline before escalating to reserve.\"\n}\n```"
+ },
+ "task": "monitor_memo"
+}

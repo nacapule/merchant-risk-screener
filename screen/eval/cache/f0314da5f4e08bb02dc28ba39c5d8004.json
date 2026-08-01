@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "4f63a6bf238de94778a5d49f678bc298ee840d5cf2013160fcb398681bd82199",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 85617,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.114,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.086,\n    \"quality\": 0.0,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.8\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.086,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.143,\n    \"quality\": 0.0,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.771\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"refund_refusal\", \"quote\": \"Event got cancelled and the refund took three weeks.\", \"date\": \"2026-03-07\"},\n    {\"theme\": \"non_delivery\", \"quote\": \"Tickets arrived the day of the show, stressful but valid.\", \"date\": \"2026-04-22\"},\n    {\"theme\": \"positive\", \"quote\": \"Tickets transferred instantly, seats were exactly as listed.\", \"date\": \"2026-06-27\"},\n    {\"theme\": \"positive\", \"quote\": \"Second time buying playoff seats here, flawless both times.\", \"date\": \"2026-06-13\"},\n    {\"theme\": \"positive\", \"quote\": \"Fees are visible before checkout which I appreciate.\", \"date\": \"2026-05-12\"}\n  ],\n  \"nps_proxy\": 69,\n  \"summary\": \"Reviews are dominated by positive signals: instant ticket transfers, accurate seating, upfront fees, and repeat playoff buyers. A recurring refund_refusal theme (event cancellations, ~3-week refund delays) clusters and intensifies in the recent half, alongside occasional late-arrival stress. No counterfeit, quality, or subscription-trap signals present.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

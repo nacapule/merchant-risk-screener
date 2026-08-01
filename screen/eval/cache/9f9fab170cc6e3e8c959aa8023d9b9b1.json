@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "9b8a0352713925ebd96727450c523c669b780b73277ce235093ca25007e117db",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 41826,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.2,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.8\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.1,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.9\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"quality\", \"quote\": \"Didn't work as advertised.\", \"date\": \"2025-09-24\"},\n    {\"theme\": \"quality\", \"quote\": \"The joint supplement did nothing for me.\", \"date\": \"2025-09-10\"},\n    {\"theme\": \"positive\", \"quote\": \"Mixes clean, tastes great, recovery feels faster.\", \"date\": \"2025-09-17\"},\n    {\"theme\": \"positive\", \"quote\": \"Solid creatine, standard results.\", \"date\": \"2025-08-10\"},\n    {\"theme\": \"positive\", \"quote\": \"Fast shipping, tubs sealed properly.\", \"date\": \"2025-08-26\"}\n  ],\n  \"nps_proxy\": 80,\n  \"summary\": \"Overwhelmingly positive reviews (80%), driven by taste/mixability and reliable shipping. Minor recurring quality complaints (20%, mostly a joint supplement and 'didn't work as advertised') concentrated before 2026. No non-delivery, counterfeit, refund, or subscription-trap signals. Sentiment improved recently: recent-half NPS 90% vs 60% earlier.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

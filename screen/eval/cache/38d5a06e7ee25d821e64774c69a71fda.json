@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "c2a708a30999ed61051f995a7a6f4d5b79c44b31d766bc7620683fc264e96887",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 59439,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.05,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.1,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.85\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.05,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.1,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.85\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Key delivered in seconds and activated first try.\", \"date\": \"2026-06-27\"},\n    {\"theme\": \"positive\", \"quote\": \"Cheapest legit keys I've found.\", \"date\": \"2026-06-09\"},\n    {\"theme\": \"positive\", \"quote\": \"Great bundle price. Region badge was accurate.\", \"date\": \"2026-03-28\"},\n    {\"theme\": \"quality\", \"quote\": \"Bought the wrong region by mistake, exchange took two days.\", \"date\": \"2026-06-02\"},\n    {\"theme\": \"counterfeit\", \"quote\": \"Key was revoked a month later, replaced under their protection policy.\", \"date\": \"2026-01-30\"}\n  ],\n  \"nps_proxy\": 80,\n  \"summary\": \"Overwhelmingly positive reviews (85%) praising fast key delivery, accurate region badges, and low prices; legitimacy is called out favorably. Two recurring risk signals persist at steady low rates: wrong-region key mixups needing exchange (quality, 10%) and revoked keys replaced under protection policy (counterfeit, 5%), both resolved but consistent across the full period. NPS proxy +80.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

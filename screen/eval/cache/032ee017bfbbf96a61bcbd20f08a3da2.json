@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "a2d65de3d58ae61188a203c9d410b7758675a64ac15a55360868c35acce11210",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 23054,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"signals_observed\": [\n    \"cb_rate_30d = 0.0268 (2.68%), triggered AUP-06.1 (30d chargeback rate threshold)\",\n    \"volume_z = 1.2 (modest volume increase, ~1.2 std dev above baseline)\",\n    \"ticket_drift = 1.08 (average ticket up ~8% vs baseline)\",\n    \"new_share = 0.034 (only 3.4% of buyers are new accounts)\",\n    \"single trigger fired: AUP-06.1 only\"\n  ],\n  \"hypotheses\": [\n    {\n      \"kind\": \"category_norm\",\n      \"likelihood\": \"high\",\n      \"reasoning\": \"Only the chargeback threshold breached; volume and ticket size are only mildly elevated and new-buyer share is low, so this reads as ordinary CB volatility around a threshold rather than a coordinated pattern.\"\n    },\n    {\n      \"kind\": \"bustout\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"Bust-out requires ramping volume/ticket on a swelling base of thin new-buyer accounts; here new_share is low and volume/ticket drift are mild, which is the opposite of the expected signature.\"\n    },\n    {\n      \"kind\": \"seasonal_spike\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"volume_z of 1.2 is a minor deviation, not the sharp seasonal ramp that typically drives CB-rate breaches via denominator effects.\"\n    },\n    {\n      \"kind\": \"data_issue\",\n      \"likelihood\": \"low\",\n      \"reasoning\": \"No metric shows the abrupt discontinuity typical of a pipeline gap; without baseline-window values to compare it can't be ruled out but nothing here specifically suggests it.\"\n    }\n  ],\n  \"recommended_action\": \"monitor\",\n  \"evidence_gaps\": [\n    \"Baseline-window cb_rate_30d value to size the actual delta, not just the threshold breach\",\n    \"Buyer-account age distribution on disputed transactions (thin/new vs established)\",\n    \"Dispute reason codes (fraud vs. product/service not received) to distinguish bust-out from ops issues\",\n    \"Whether the CB uptick is concentrated in a narrow cohort/date range (pipeline gap) or spread evenly\"\n  ],\n  \"memo_markdown\": \"Merchant 68 breached AUP-06.1 (30d CB rate 2.68%) as its sole trigger. Supporting metrics are mild: volume_z 1.2, ticket_drift 1.08, and new_share only 3.4% \u2014 notably low, which cuts against the classic bust-out signature of ramping volume/ticket on a thin, new-buyer base. This profile looks more like normal chargeback noise or category baseline drift than a coordinated exit. Recommend **monitor** for the next window rather than restricting settlement. Before escalating, pull the CB reason-code mix and confirm whether disputes cluster in new accounts or are spread across the established base \u2014 that single check would most efficiently confirm or rule out bust-out.\"\n}\n```"
+ },
+ "task": "monitor_memo"
+}

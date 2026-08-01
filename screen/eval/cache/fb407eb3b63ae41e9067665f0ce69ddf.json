@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "56bb0bcd702381481a2e41b67c9f23d5ee1acef30f6e794d1d54c4b4893652a3",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 27747,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.0,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.83\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.0,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.67\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Smooth transaction on a five-figure piece.\", \"date\": \"2025-08-13\"},\n    {\"theme\": \"positive\", \"quote\": \"The chronograph was exactly as photographed, superb condition.\", \"date\": \"2025-11-20\"},\n    {\"theme\": \"positive\", \"quote\": \"The chronograph was exactly as photographed, superb condition.\", \"date\": \"2025-12-01\"},\n    {\"theme\": \"positive\", \"quote\": \"The chronograph was exactly as photographed, superb condition.\", \"date\": \"2026-03-11\"},\n    {\"theme\": \"positive\", \"quote\": \"Smooth transaction on a five-figure piece.\", \"date\": \"2026-06-14\"}\n  ],\n  \"nps_proxy\": 78,\n  \"summary\": \"Uniformly strong feedback: accurate, as-described high-value items and smooth transactions, no non-delivery, counterfeit, refund, or subscription complaints. One neutral note on slow insurance paperwork slightly softens the most recent half, but sentiment stays high.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

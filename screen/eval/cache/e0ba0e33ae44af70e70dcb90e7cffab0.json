@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "2e92212ecd6197b481276e1d82d988f53b5e33310ca0a613355314fcee626c1d",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 59248,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.14,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.79\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.21,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.71\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Huge flavor selection, fast shipping.\", \"date\": \"2026-06-27\"},\n    {\"theme\": \"positive\", \"quote\": \"Pods arrived well packed, prices beat the local shop.\", \"date\": \"2026-05-20\"},\n    {\"theme\": \"quality\", \"quote\": \"One coil was dead on arrival.\", \"date\": \"2025-11-12\"},\n    {\"theme\": \"quality\", \"quote\": \"One coil was dead on arrival.\", \"date\": \"2026-06-05\"}\n  ],\n  \"nps_proxy\": 69,\n  \"summary\": \"Overwhelmingly positive: fast shipping and flavor variety drive ~79% of reviews, sentiment stable recently (NPS\u224869, recency-weighted). Minor recurring quality complaints (dead coils, ~14%) recur roughly quarterly. Two 1-star reviews (2025-12-17, 2026-04-10) flag no age verification at delivery \u2014 a compliance/reputational risk outside standard themes, warranting AUP review despite low volume.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

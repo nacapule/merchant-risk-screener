@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-haiku-4-5-20251001",
+ "prompt_sha256": "706ba12edda4d080dadf08e0ad4d905bcfb27c7480eb5efb3a47125d532c5e9c",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3e-05,
+  "duration_ms": 13879,
+  "input_tokens": 10,
+  "model": "claude-haiku-4-5-20251001",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"category\": \"event_tickets\",\n  \"mcc_guess\": {\n    \"code\": \"7999\",\n    \"name\": \"Amusement and Recreation Services, Not Elsewhere Classified\"\n  },\n  \"confidence\": 0.98,\n  \"evidence_quote\": \"E-tickets transfer to your wallet app\"\n}\n```"
+ },
+ "task": "merchant_categorize"
+}

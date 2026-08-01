@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "74b0881a6212e139446fb3bb022fa1faa1c83acb4592c403162b20709fe73c52",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 5.1e-05,
+  "duration_ms": 51821,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 3,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.10,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.90\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.0,\n    \"subscription_trap\": 0.0,\n    \"positive\": 1.0\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"The tincture cured my insomnia, I sleep through the night now.\", \"date\": \"2026-06-11\"},\n    {\"theme\": \"positive\", \"quote\": \"Gummies are gentle and the COA link is right on the page.\", \"date\": \"2026-05-29\"},\n    {\"theme\": \"positive\", \"quote\": \"Balm helps my knees after runs.\", \"date\": \"2026-04-03\"},\n    {\"theme\": \"quality\", \"quote\": \"Subtle effect, might need a stronger dose.\", \"date\": \"2025-11-02\"},\n    {\"theme\": \"quality\", \"quote\": \"Subtle effect, might need a stronger dose.\", \"date\": \"2025-09-11\"}\n  ],\n  \"nps_proxy\": 94,\n  \"summary\": \"Reviews are overwhelmingly positive: tincture, gummies, and balm praised for efficacy and COA transparency, yielding a ~94 NPS proxy. Minor 'subtle effect' quality gripes (10% overall) cluster in the earlier half and vanish in the recent half. No non-delivery, counterfeit, refund-refusal, or subscription-trap signals. Reputational risk: low.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "e7092cd258c16f1103ae0a332ca09583c858507bab1211cc9cd30e6357cd9001",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 49807,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01\",\n      \"verdict\": \"pass\",\n      \"quote\": \"\",\n      \"note\": \"Product listings are fresh-cut flowers and planters (market bouquet, peony dozen, orchid planter) \u2014 no match to any AUP-01 prohibited category.\"\n    },\n    {\n      \"section\": \"AUP-02\",\n      \"verdict\": \"pass\",\n      \"quote\": \"\",\n      \"note\": \"Same-day/1-2 day fulfillment rules out pre-order and dropshipping-signature concerns; no tickets, luxury goods, supplements, digital goods, or deposit services present.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition. Refunds are issued to the original payment method within 5\u20137 business days of receiving the return.\",\n      \"note\": \"Refund/return policy is present and specific.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n      \"note\": \"Shipping policy with stated timeframes is present.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"restricted\",\n      \"quote\": \"Contact Email: support@bloom-stem.example\",\n      \"note\": \"Only an email address is provided; no phone number or physical address appears anywhere in the site text, so the email-plus-one requirement is not met.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present.\"\n    },\n    {\n      \"section\": \"AUP-H5\",\n      \"verdict\": \"insufficient-info\",\n      \"quote\": \"\",\n      \"note\": \"No statement or evidence about TLS/checkout security appears in the provided site text.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Bloom & Stem \u2014 about\",\n      \"note\": \"Business name (Bloom & Stem) is consistent across index, about, contact, and policies pages; no jurisdiction conflicts noted.\"\n    }\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Florist selling flowers/planters \u2014 no AUP-01 prohibited or AUP-02 restricted category matches. Refund, shipping, and terms policies are present and specific (AUP-H1/H2/H4 pass), and business identity is consistent (AUP-H6). However contact info shows email only, no phone/address (AUP-H3 gap), and checkout TLS cannot be verified from provided text (AUP-H5 insufficient-info).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

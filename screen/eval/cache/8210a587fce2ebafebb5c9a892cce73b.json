@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "81d81f03be3c95b3d4708f04a13b6db45bb4d0e8e141f1fc6a25f9ef63fd012e",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 63670,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.133,\n    \"counterfeit\": 0.578,\n    \"refund_refusal\": 0.133,\n    \"quality\": 0.511,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.667\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.130,\n    \"counterfeit\": 0.652,\n    \"refund_refusal\": 0.130,\n    \"quality\": 0.478,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.696\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"counterfeit\", \"quote\": \"Customs seized my order as counterfeit and I got nothing back.\", \"date\": \"2026-05-18\"},\n    {\"theme\": \"quality\", \"quote\": \"The logo peeled off the tote after two weeks.\", \"date\": \"2026-06-16\"},\n    {\"theme\": \"counterfeit\", \"quote\": \"Looks just like the real one, my friends can't tell the difference.\", \"date\": \"2026-06-12\"},\n    {\"theme\": \"quality\", \"quote\": \"Ordered the Birkin-style, quality is insane for 189.\", \"date\": \"2026-05-18\"},\n    {\"theme\": \"quality\", \"quote\": \"Stitching is good, smell took a week to air out.\", \"date\": \"2026-03-12\"}\n  ],\n  \"nps_proxy\": 44,\n  \"summary\": \"Merchant appears to sell counterfeit designer replicas marketed as passing for genuine ('Birkin-style', 'looks just like the real one'). ~58% of reviews reference counterfeit goods; customs seizures recur with no refunds (13% each for non-delivery/refund_refusal), holding steady in the recent half. Quality complaints include peeling logos. High NPS proxy reflects satisfaction with deception, not product legitimacy.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

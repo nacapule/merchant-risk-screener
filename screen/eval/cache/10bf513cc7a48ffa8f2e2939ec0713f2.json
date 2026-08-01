@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "7efb1ad332bc14a39a2da04f502f64113a0601c19d7e2bdfadd5bdf901ceb6a4",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 35613,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\"section\": \"AUP-01\", \"verdict\": \"pass\", \"quote\": \"\", \"note\": \"No content in weapons, tobacco, cannabis, adult, gambling, crypto, counterfeit, MLM, medical-cure, or credential-mill categories found on any page.\"},\n    {\"section\": \"AUP-02.6\", \"verdict\": \"restricted\", \"quote\": \"Mail-in service: $25 deposit, quote before work\", \"note\": \"Deposit collected before work/quote is delivered fits AUP-02.6 deposit-and-disappear exposure for repair services.\"},\n    {\"section\": \"AUP-H1\", \"verdict\": \"insufficient-info\", \"quote\": \"\", \"note\": \"No refund/return policy text appears on index, about, or contact pages.\"},\n    {\"section\": \"AUP-H2\", \"verdict\": \"insufficient-info\", \"quote\": \"Most repairs done same day in-store.\", \"note\": \"In-store timeframe is stated, but no shipping/turnaround timeframe is given for the mail-in deposit service.\"},\n    {\"section\": \"AUP-H3\", \"verdict\": \"pass\", \"quote\": \"Email: support@flashfone-repairs.example \\u00b7 Phone: (612) 555-0142 \\u00b7 88 Lyndale Ave S\", \"note\": \"Email, phone, and street address are all present and consistent across about.html and contact.html.\"},\n    {\"section\": \"AUP-H4\", \"verdict\": \"insufficient-info\", \"quote\": \"\", \"note\": \"No terms-of-service text or link appears anywhere in the provided pages.\"},\n    {\"section\": \"AUP-01.9\", \"verdict\": \"pass\", \"quote\": \"\", \"note\": \"No medical/treatment/cure claims in the repair-service copy.\"}\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Phone repair merchant. Mail-in service takes a $25 deposit before quoting work (AUP-02.6 deposit-and-disappear risk) \u2014 restricted, condition: cap mail-in volume / reserve pending fulfillment evidence. Contact info (AUP-H3) present and consistent. No refund policy, no TOS, and no mail-in turnaround timeframe found (AUP-H1/H2/H4 gaps) \u2014 raise score, request docs before full approval.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

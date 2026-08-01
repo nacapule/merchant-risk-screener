@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "15405d2a1c2584c054efb6adeec38b78d41bf6ef28558a0ad4574091c3849d79",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 29676,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\"section\": \"AUP-01.9\", \"verdict\": \"prohibited\",\n     \"quote\": \"Clinically proven to cure joint pain in 30 days.\",\n     \"note\": \"JointShield Pro makes a disease-treatment cure claim, hard-override prohibited regardless of other signals.\"},\n    {\"section\": \"AUP-01.9\", \"verdict\": \"prohibited\",\n     \"quote\": \"Reverses diabetes naturally, no prescription needed.\",\n     \"note\": \"GlucoBalance claims to reverse a diagnosed disease without medical supervision, prohibited medical-claims category.\"},\n    {\"section\": \"AUP-02.4\", \"verdict\": \"restricted\",\n     \"quote\": \"Supports muscle recovery after training.\",\n     \"note\": \"Whey isolate uses acceptable structure/function language, but the store as a whole is a supplements merchant requiring claim review under AUP-02.4.\"},\n    {\"section\": \"AUP-03.H1\", \"verdict\": \"pass\",\n     \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n     \"note\": \"Refund/return policy is present and findable.\"},\n    {\"section\": \"AUP-03.H2\", \"verdict\": \"pass\",\n     \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n     \"note\": \"Shipping policy states timeframes.\"},\n    {\"section\": \"AUP-03.H3\", \"verdict\": \"pass\",\n     \"quote\": \"Contact: hello@titan-supps.example, (480) 555-0114, 2200 E Camelback Rd.\",\n     \"note\": \"Email, phone, and address are all present.\"},\n    {\"section\": \"AUP-03.H4\", \"verdict\": \"pass\",\n     \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n     \"note\": \"Terms of service present.\"},\n    {\"section\": \"AUP-03.H5\", \"verdict\": \"insufficient-info\",\n     \"quote\": \"\",\n     \"note\": \"Site text contains no statement about TLS/checkout security; cannot assess from provided evidence (AUP-05.2).\"},\n    {\"section\": \"AUP-03.H6\", \"verdict\": \"restricted\",\n     \"quote\": \"Phone: (555) 010-9875\",\n     \"note\": \"Contact page phone (555) 010-9875 conflicts with about page phone (480) 555-0114, a business-identity consistency gap.\"}\n  ],\n  \"overall\": \"prohibited\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Hard override: two products (JointShield Pro, GlucoBalance) make disease cure/reversal claims under AUP-01.9, so the application is prohibited regardless of otherwise-complete hygiene (refund/shipping/contact/terms all present). Broader catalog is a dietary-supplements store (AUP-02.4, restricted, needs claim review). Phone number is inconsistent between about and contact pages (AUP-H6). TLS status unstated (insufficient-info).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

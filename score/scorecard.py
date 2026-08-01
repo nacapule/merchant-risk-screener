@@ -66,9 +66,15 @@ def score_merchant(
         res.decision = "decline"
         res.overrides.append(f"prohibited verdict ({', '.join(secs)})")
         res.reason_codes.extend(secs)
-    if "insufficient-info" in v_levels and res.decision != "decline":
+    core_insufficient = any(
+        v.get("verdict") == "insufficient-info"
+        and str(v.get("section", "")).startswith(("AUP-01", "AUP-02"))
+        for v in verdicts
+    )
+    if core_insufficient and res.decision != "decline":
+        # category-level unassessable -> fail safe to a human (AUP-05.2)
         res.decision = "manual_review"
-        res.overrides.append("insufficient-info verdict (AUP-05.II)")
+        res.overrides.append("insufficient-info on core category sections (AUP-05.II)")
         res.reason_codes.append("AUP-05.II")
 
     # ---- additive factors (always computed: the breakdown is the audit trail)

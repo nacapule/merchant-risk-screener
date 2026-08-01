@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "ccdcfcabecc40ca2848a79d780b4e1aea4832cd5bcb87178c5359fad4855588c",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 44242,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.103,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.897\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.172,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.828\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Code arrived instantly and worked, saved 8% on my groceries.\", \"date\": \"2025-07-19\"},\n    {\"theme\": \"quality\", \"quote\": \"One card had zero balance, support replaced it after two days.\", \"date\": \"2025-07-18\"},\n    {\"theme\": \"positive\", \"quote\": \"Been using monthly for a year, never a bad code.\", \"date\": \"2025-08-09\"},\n    {\"theme\": \"positive\", \"quote\": \"Second bulk order, all codes valid.\", \"date\": \"2025-07-15\"},\n    {\"theme\": \"quality\", \"quote\": \"One card had zero balance, support replaced it after two days.\", \"date\": \"2026-06-05\"}\n  ],\n  \"nps_proxy\": 75,\n  \"summary\": \"Reviews overwhelmingly positive, driven by instant code delivery and reliable bulk orders. Recurring minor issue: occasional zero-balance gift cards, resolved by support replacement within days. No non-delivery, counterfeit, refund-refusal, or subscription-trap themes present. Sentiment stable and strong across the full history, including the most recent period.\"\n}\n```"
+ },
+ "task": "review_themes"
+}

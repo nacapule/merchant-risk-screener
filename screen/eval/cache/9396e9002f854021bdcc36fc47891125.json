@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "84008921666d3aaf47c0144dfd4f5b63da156f69e06ea42b480c062fa8b05feb",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 69257,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"theme_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.14,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.86\n  },\n  \"recent_half_shares\": {\n    \"non_delivery\": 0.0,\n    \"counterfeit\": 0.0,\n    \"refund_refusal\": 0.0,\n    \"quality\": 0.17,\n    \"subscription_trap\": 0.0,\n    \"positive\": 0.83\n  },\n  \"representative_quotes\": [\n    {\"theme\": \"positive\", \"quote\": \"Quality is excellent and the fit was exactly as the size chart said.\", \"date\": \"2026-06-24\"},\n    {\"theme\": \"positive\", \"quote\": \"Nice fabric, shipped in three days, would buy again.\", \"date\": \"2026-06-27\"},\n    {\"theme\": \"positive\", \"quote\": \"Shipping took a bit longer than promised but the sweater is great.\", \"date\": \"2026-06-04\"},\n    {\"theme\": \"quality\", \"quote\": \"Runs slightly small for me, exchange was easy though.\", \"date\": \"2026-05-24\"},\n    {\"theme\": \"quality\", \"quote\": \"Color faded a little after several washes.\", \"date\": \"2026-03-25\"}\n  ],\n  \"nps_proxy\": 81,\n  \"summary\": \"Overwhelmingly positive corpus (quality, fit, fast shipping) with a small, stable quality/fit theme (sizing, minor color fading) holding steady in the recent half. No non-delivery, counterfeit, refund-refusal, or subscription-trap signals. Recency-weighted NPS proxy is strongly positive at 81.\"\n}\n```"
+ },
+ "task": "review_themes"
+}
