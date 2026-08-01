@@ -1,0 +1,26 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -q -e ".[dev]"
+      - name: Lint
+        run: .venv/bin/ruff check collect screen score monitor llm fixtures tests
+      - name: Tests
+        run: .venv/bin/python -m pytest tests/ -q
+      - name: Fixtures (deterministic rebuild)
+        run: .venv/bin/python fixtures/generate_fixtures.py
+      - name: Full decision matrix (offline, committed cache — no keys)
+        run: .venv/bin/python -m score.decisions --offline
