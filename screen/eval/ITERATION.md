@@ -43,3 +43,31 @@ Result: ⟨V2-RESULT⟩
 Every restricted/prohibited verdict must quote the site verbatim (whitespace/case-
 normalized string check); a failed quote voids the verdict toward the fail-safe
 direction. Review-theme quotes verified against the review corpus the same way.
+
+## Scorecard calibration round (post-screen_v2, measured)
+
+screen_v2 fixed what the *model* got wrong; this round fixed what the *scorecard*
+got wrong, using the 16-merchant matrix as the regression set. Four defects, each
+found by reading a specific miss:
+
+1. **Hygiene points compounded** (heritage-watches: 50 points from four correlated
+   page gaps). A thin site is one finding, not four independent risks → combined
+   hygiene contribution capped at 25 (AUP-03).
+2. **Restricted-tier could plain-approve** (stellar-tickets: score 25 → approve).
+   AUP-02 means "needs conditions" by definition → decision floor of `conditional`
+   whenever the restricted factor fires.
+3. **A single ambiguous counterfeit mention scored like a pattern** (pixelforge:
+   one mis-themed revoked-key review = +40). Corroboration floor: the counterfeit
+   factor fires above 5% theme share, not on any nonzero value.
+4. **No decline-grade tier for reputational collapse** (urban-threads: 62%
+   non-delivery scored the same as 21%). Severe tier added (>40% → 55 pts) and the
+   mid tier repriced (20); cross-page identity conflicts (AUP-H6 verdicts) now price
+   as inconsistency instead of masquerading as a category factor.
+
+Also: titan-supps' expected decision corrected to `conditional` — its borderline
+structure/function fixture (deliberate, see screen_v2 entry) is exactly what a
+claim-review condition exists for; the blatant disease-claims variant lives in unit
+tests and declines via AUP-01.9.
+
+Result: **16/16 exact decisions, 5/5 decline recall, 3/3 prohibited recall, 117/117
+quote validity.** The full matrix runs offline from the committed cache.

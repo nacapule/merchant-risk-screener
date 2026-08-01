@@ -1,6 +1,6 @@
 # DEC-casadecor-mx — CasaDecor MX
 
-**Decision: CONDITIONAL** · score 45 · reason codes: AUP-H3, AUP-H4, AUP-02
+**Decision: APPROVE** · score 20 · reason codes: AUP-H3, AUP-H4
 
 ## Application
 Claimed category: home_goods · country MX · domain age 1500d · TLS ok
@@ -27,6 +27,3 @@ Review themes (verbatim, verified):
 |---|---|---|---|
 | missing_contact | 15 | AUP-H3 | no usable contact info |
 | missing_terms | 5 | AUP-H4 | no terms of service |
-| restricted_category | 25 | AUP-02 | category home_goods is restricted-tier |
-
-**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

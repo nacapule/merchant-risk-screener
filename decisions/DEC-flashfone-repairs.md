@@ -1,6 +1,6 @@
 # DEC-flashfone-repairs — FlashFone Repairs
 
-**Decision: MANUAL_REVIEW** · score 60 · reason codes: AUP-H1, AUP-H2, AUP-H4, AUP-02
+**Decision: CONDITIONAL** · score 50 · reason codes: AUP-H1, AUP-H2, AUP-H4, AUP-02
 
 ## Application
 Claimed category: repair_services · country US · domain age 420d · TLS ok
@@ -25,4 +25,7 @@ Review themes (verbatim, verified):
 | missing_refund_policy | 20 | AUP-H1 | no refund/return policy found |
 | missing_shipping_policy | 10 | AUP-H2 | no shipping policy found |
 | missing_terms | 5 | AUP-H4 | no terms of service |
-| restricted_category | 25 | AUP-02 | category repair_services is restricted-tier |
+| hygiene_cap | -10 | AUP-03 | hygiene points capped at 25 |
+| restricted_category | 25 | AUP-02 | restricted-tier category (repair_services) |
+
+**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

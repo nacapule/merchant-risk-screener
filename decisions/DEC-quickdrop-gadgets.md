@@ -1,6 +1,6 @@
 # DEC-quickdrop-gadgets — QuickDrop Gadgets
 
-**Decision: DECLINE** · score 115 · reason codes: AUP-02.7, AUP-H1, AUP-H2, AUP-H3, AUP-H4, AUP-H5, AUP-02
+**Decision: MANUAL_REVIEW** · score 80 · reason codes: AUP-02.7, AUP-H1, AUP-H2, AUP-H3, AUP-H4, AUP-H5, AUP-02
 
 ## Application
 Claimed category: electronics · country US · domain age 21d · TLS MISSING
@@ -26,7 +26,5 @@ Verdicts with evidence:
 | missing_contact | 15 | AUP-H3 | no usable contact info |
 | missing_terms | 5 | AUP-H4 | no terms of service |
 | no_tls | 10 | AUP-H5 | TLS absent/broken |
-| restricted_category | 25 | AUP-02 | category electronics is restricted-tier |
-
-## What would change this decision
-Removal of the prohibited content/category, or (for reputational declines) a sustained reversal of the non-delivery/refund-refusal pattern over 90+ days on another processor, with evidence.
+| hygiene_cap | -35 | AUP-03 | hygiene points capped at 25 |
+| restricted_category | 25 | AUP-02 | restricted verdict on an AUP-02 section (electronics) |

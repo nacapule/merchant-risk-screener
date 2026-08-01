@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "6f0022f429489b2a283ef56845dd51765d3762a34a769208fccb3991519efe94",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 44573,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\"section\": \"AUP-01.9\", \"verdict\": \"pass\",\n     \"quote\": \"Supports muscle recovery after training.\",\n     \"note\": \"Product claims are structure/function language, not disease-cure or disease-reversal claims.\"},\n    {\"section\": \"AUP-02.4\", \"verdict\": \"restricted\",\n     \"quote\": \"Clinically studied ingredients for joint comfort.\",\n     \"note\": \"Supplement structure/function claim on JointShield Pro requires claim review per AUP-02.4.\"},\n    {\"section\": \"AUP-02.4\", \"verdict\": \"restricted\",\n     \"quote\": \"Helps maintain healthy blood sugar levels already in normal range.\",\n     \"note\": \"GlucoBalance claim is a borderline structure/function statement (avoids disease-treatment framing) but still needs claim review.\"},\n    {\"section\": \"AUP-H1\", \"verdict\": \"pass\",\n     \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n     \"note\": \"Refund/return policy is present and findable.\"},\n    {\"section\": \"AUP-H2\", \"verdict\": \"pass\",\n     \"quote\": \"Orders ship within 1\\u20132 business days via tracked carrier. Standard delivery 3\\u20135 days.\",\n     \"note\": \"Shipping policy states timeframes.\"},\n    {\"section\": \"AUP-H3\", \"verdict\": \"pass\",\n     \"quote\": \"Contact Email: support@titan-supps.example \\u00b7 Phone: (555) 010-9875\",\n     \"note\": \"Email and phone both present.\"},\n    {\"section\": \"AUP-H4\", \"verdict\": \"pass\",\n     \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n     \"note\": \"Terms of service present.\"},\n    {\"section\": \"AUP-H6\", \"verdict\": \"restricted\",\n     \"quote\": \"(480) 555-0114\",\n     \"note\": \"About page lists phone (480) 555-0114 while contact page lists a different number, \\\"Phone: (555) 010-9875\\\" \\u2014 inconsistent business identity across pages.\"}\n  ],\n  \"overall\": \"restricted\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Dietary supplement retailer with standard structure/function claims (joint comfort, blood sugar maintenance) \\u2014 restricted under AUP-02.4, no disease-cure language found. Hygiene mostly complete (refund, shipping, terms, contact) but phone numbers differ between about and contact pages (AUP-H6 gap).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

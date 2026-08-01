@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "419e6ed74541d4f99433943749a55ce9a45955d6384a631d26039d87554a4360",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 8.1e-05,
+  "duration_ms": 29882,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 5,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01.3\",\n      \"verdict\": \"prohibited\",\n      \"quote\": \"Hemp-derived, under 0.3% THC.\",\n      \"note\": \"Full CBD product line (tincture, gummies, balm) is a cannabis/CBD derivative, prohibited regardless of local legality.\"\n    },\n    {\n      \"section\": \"AUP-01.9\",\n      \"verdict\": \"prohibited\",\n      \"quote\": \"Customers tell us our tincture cured their insomnia \u2014 read the reviews.\",\n      \"note\": \"Site text makes a disease-cure claim (\\\"cured\\\") rather than softer structure/function language, meeting the prohibited-grade bar.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy is present and findable on policies.html.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n      \"note\": \"Shipping policy states concrete timeframes.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Contact Email: support@greenleaf-wellness.example \u00b7 Phone: (555) 010-7499\",\n      \"note\": \"Email and phone are both provided, satisfying contact hygiene.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present on policies.html.\"\n    }\n  ],\n  \"overall\": \"prohibited\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Merchant sells CBD tincture, gummies, and balm \u2014 a hard-prohibited cannabis/CBD category under AUP-01.3 regardless of local legality \u2014 and the site additionally carries a disease-cure claim (\\\"cured their insomnia\\\") triggering AUP-01.9. Hygiene (refund, shipping, contact, terms) is otherwise complete, but category prohibition overrides all other signals: decline.\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

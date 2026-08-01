@@ -1,6 +1,6 @@
 # DEC-bloom-stem — Bloom & Stem
 
-**Decision: CONDITIONAL** · score 40 · reason codes: AUP-H3, AUP-02
+**Decision: APPROVE** · score 15 · reason codes: AUP-H3
 
 ## Application
 Claimed category: florist · country US · domain age 610d · TLS ok
@@ -27,6 +27,3 @@ Review themes (verbatim, verified):
 | factor | points | code | why |
 |---|---|---|---|
 | missing_contact | 15 | AUP-H3 | no usable contact info |
-| restricted_category | 25 | AUP-02 | category florist is restricted-tier |
-
-**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

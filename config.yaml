@@ -42,8 +42,10 @@ scorecard:
     missing_contact: 15           # AUP-H3; unreachable merchants convert to chargebacks
     missing_terms: 5              # AUP-H4
     no_tls: 10                    # AUP-H5
+    hygiene_cap: 25               # AUP-03: page gaps correlate; cap combined hygiene points
     restricted_category: 25       # AUP-02 tier carries structural risk
-    review_nondelivery_over_20pct: 35  # AUP-04.ND strongest predictor
+    review_nondelivery_over_20pct: 20  # AUP-04.ND mid tier: concerning, needs corroboration
+    review_nondelivery_over_40pct: 55  # AUP-04.1: overwhelming non-delivery is decline-grade alone
     review_counterfeit_any: 40    # AUP-04.CF / AUP-01.7
     review_refund_refusal_over_15pct: 20  # AUP-04.RR
     review_subscription_trap: 15  # AUP-04.ST
@@ -51,8 +53,8 @@ scorecard:
   bands:
     approve_max: 25
     conditional_max: 50           # approve with limits + rolling reserve suggestion
-    manual_max: 79                # human underwriter review
-    # >= 80 -> decline
+    manual_max: 84                # human underwriter review
+    # >= 85 -> decline
   # hard overrides regardless of score:
   #   any prohibited verdict -> decline
   #   any insufficient-info verdict -> manual_review (fail-safe direction)

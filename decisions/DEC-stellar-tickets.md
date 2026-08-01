@@ -1,6 +1,6 @@
 # DEC-stellar-tickets — Stellar Tickets
 
-**Decision: APPROVE** · score 25 · reason codes: AUP-02
+**Decision: CONDITIONAL** · score 25 · reason codes: AUP-02
 
 ## Application
 Claimed category: event_tickets · country US · domain age 950d · TLS ok
@@ -25,4 +25,6 @@ Review themes (verbatim, verified):
 ## Scorecard breakdown
 | factor | points | code | why |
 |---|---|---|---|
-| restricted_category | 25 | AUP-02 | category event_tickets is restricted-tier |
+| restricted_category | 25 | AUP-02 | restricted-tier category (event_tickets) |
+
+**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

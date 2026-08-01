@@ -54,12 +54,35 @@ def test_noncore_insufficient_info_does_not_override() -> None:
 
 def test_reputational_decline_despite_good_pages() -> None:
     screen = dict(CLEAN_SCREEN)
-    screen["review_themes"] = {"non_delivery": 0.30, "counterfeit": 0.0,
-                               "refund_refusal": 0.20, "positive": 0.3}
+    screen["review_themes"] = {"non_delivery": 0.55, "counterfeit": 0.0,
+                               "refund_refusal": 0.20, "positive": 0.2}
     tech = dict(CLEAN_TECH, domain_age_days=150)
     r = score_merchant("badrep", CFG, tech, CLEAN_CONTENT, screen)
-    # 35 (ND) + 20 (RR) + 15 (age<180) = 70 -> manual_review band
-    assert r.decision == "manual_review" and r.score == 70
+    # 55 (ND severe) + 20 (RR) + 15 (age<180) = 90 -> decline band (>= 85)
+    assert r.decision == "decline" and r.score == 90
+
+
+def test_mid_nondelivery_stays_subdecline() -> None:
+    screen = dict(CLEAN_SCREEN)
+    screen["review_themes"] = {"non_delivery": 0.30, "counterfeit": 0.0,
+                               "refund_refusal": 0.20, "positive": 0.4}
+    r = score_merchant("midrep", CFG, CLEAN_TECH, CLEAN_CONTENT, screen)
+    # 20 (ND mid) + 20 (RR) = 40 -> conditional, not a reputational decline
+    assert r.decision == "conditional" and r.score == 40
+
+
+def test_restricted_category_floor_never_plain_approves() -> None:
+    screen = dict(CLEAN_SCREEN, category="event_tickets")
+    r = score_merchant("tickets", CFG, CLEAN_TECH, CLEAN_CONTENT, screen)
+    assert r.score == 25 and r.decision == "conditional" and r.conditions
+
+
+def test_single_ambiguous_counterfeit_mention_needs_corroboration() -> None:
+    screen = dict(CLEAN_SCREEN)
+    screen["review_themes"] = {"non_delivery": 0.0, "counterfeit": 0.05,
+                               "refund_refusal": 0.0, "positive": 0.9}
+    r = score_merchant("onemention", CFG, CLEAN_TECH, CLEAN_CONTENT, screen)
+    assert "AUP-04.CF" not in r.reason_codes
 
 
 def test_band_edges() -> None:

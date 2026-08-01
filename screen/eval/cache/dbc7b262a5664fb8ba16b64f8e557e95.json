@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "302d9670a0c626c651e347f35fb22b143237b068944093bf0496e58c2311954b",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 3.6e-05,
+  "duration_ms": 30317,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 2,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01.2\",\n      \"verdict\": \"prohibited\",\n      \"quote\": \"Pod systems \u2014 from $24 E-liquid 60ml, 40+ flavors \u2014 $16 Disposables, 5000 puffs \u2014 $19 Coils and tanks\",\n      \"note\": \"Site sells vaping/e-cigarette hardware and nicotine e-liquid, a hard-override prohibited category regardless of hygiene or other signals.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy is present and findable on policies.html.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier.\",\n      \"note\": \"Shipping policy states clear timeframes.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@nova-vape.example \u00b7 Phone: (555) 010-7771 \u00b7 See about page for our address.\",\n      \"note\": \"Email and phone both present on contact.html.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of Service present on policies.html.\"\n    },\n    {\n      \"section\": \"AUP-H6\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Nova Vape Lounge \u2014 index Nova Vape Lounge index \u00b7 about \u00b7 policies \u00b7 contact\",\n      \"note\": \"Business name is consistent across index, about, contact, and policies pages.\"\n    }\n  ],\n  \"overall\": \"prohibited\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Nova Vape Lounge sells pod systems, e-liquid, disposables, and coils/tanks \u2014 nicotine vaping products under AUP-01.2, a hard-override prohibited category. Hygiene is otherwise strong (refund, shipping, contact, and terms all present and consistent), but no score can rescue a prohibited category; decline regardless.\"\n}\n```\n\nCategory hit is clear-cut (AUP-01.2) and hygiene is otherwise clean \u2014 the override isn't close, so I didn't flag any borderline judgment calls here. No AUP-02 or AUP-01.9 signals present in the text."
+ },
+ "task": "policy_screen"
+}

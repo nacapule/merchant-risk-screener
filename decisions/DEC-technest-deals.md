@@ -1,6 +1,6 @@
 # DEC-technest-deals — TechNest Deals
 
-**Decision: MANUAL_REVIEW** · score 65 · reason codes: AUP-H4, AUP-02, AUP-04.ND
+**Decision: CONDITIONAL** · score 50 · reason codes: AUP-H4, AUP-02, AUP-04.ND
 
 ## Application
 Claimed category: electronics · country US · domain age 240d · TLS ok
@@ -27,5 +27,7 @@ Review themes (verbatim, verified):
 | factor | points | code | why |
 |---|---|---|---|
 | missing_terms | 5 | AUP-H4 | no terms of service |
-| restricted_category | 25 | AUP-02 | category electronics is restricted-tier |
-| review_nondelivery_over_20pct | 35 | AUP-04.ND | non-delivery theme share 34% |
+| restricted_category | 25 | AUP-02 | restricted verdict on an AUP-02 section (electronics) |
+| review_nondelivery_over_20pct | 20 | AUP-04.ND | non-delivery theme share 34% |
+
+**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

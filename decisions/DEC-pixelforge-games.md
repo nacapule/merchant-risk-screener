@@ -1,6 +1,6 @@
 # DEC-pixelforge-games — PixelForge Games
 
-**Decision: MANUAL_REVIEW** · score 65 · reason codes: AUP-02, AUP-04.CF
+**Decision: CONDITIONAL** · score 25 · reason codes: AUP-02
 
 ## Application
 Claimed category: digital_goods · country US · domain age 780d · TLS ok
@@ -25,5 +25,6 @@ Review themes (verbatim, verified):
 ## Scorecard breakdown
 | factor | points | code | why |
 |---|---|---|---|
-| restricted_category | 25 | AUP-02 | category digital_goods is restricted-tier |
-| review_counterfeit_any | 40 | AUP-04.CF | counterfeit theme share 5% |
+| restricted_category | 25 | AUP-02 | restricted-tier category (digital_goods) |
+
+**Conditions:** transaction cap until 90-day performance review; rolling reserve (suggested 10%) against future chargebacks

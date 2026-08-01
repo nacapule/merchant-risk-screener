@@ -135,8 +135,8 @@ merchants:
     claimed_category: supplements
     country: US
     domain_age_days: 530
-    expected_decision: manual_review
-    expected_reason_codes: [AUP-02.4]
+    expected_decision: conditional
+    expected_reason_codes: [AUP-02, AUP-02.4]
     site_brief: >
       Supplement store. Most products use "supports" language (passes), but two product
       pages say "clinically proven to cure joint pain" and "reverses diabetes naturally"

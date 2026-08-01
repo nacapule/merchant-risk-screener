@@ -1,0 +1,15 @@
+{
+ "backend": "cli",
+ "model": "claude-sonnet-5",
+ "prompt_sha256": "987da1560501d39c0e44825a86b9743d3ab3139abf0bd29ceb12135495db3358",
+ "response": {
+  "backend": "cli",
+  "cost_usd": 6.6e-05,
+  "duration_ms": 26953,
+  "input_tokens": 2,
+  "model": "claude-sonnet-5",
+  "output_tokens": 4,
+  "text": "```json\n{\n  \"verdicts\": [\n    {\n      \"section\": \"AUP-01.7\",\n      \"verdict\": \"prohibited\",\n      \"quote\": \"Logos and packaging are indistinguishable from boutique originals.\",\n      \"note\": \"Site markets explicit replicas (\\\"1:1 mirror quality,\\\" \\\"same hardware as the original,\\\" \\\"Inspired by Gucci marmont\\\") \u2014 counterfeit branded goods, hard override regardless of hygiene or other signals.\"\n    },\n    {\n      \"section\": \"AUP-H1\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Returns accepted within 30 days of delivery in original condition.\",\n      \"note\": \"Refund/return policy present and findable.\"\n    },\n    {\n      \"section\": \"AUP-H2\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Orders ship within 1\u20132 business days via tracked carrier. Standard delivery 3\u20135 days.\",\n      \"note\": \"Shipping policy with stated timeframes present.\"\n    },\n    {\n      \"section\": \"AUP-H3\",\n      \"verdict\": \"pass\",\n      \"quote\": \"Email: support@aura-lux-bags.example \u00b7 Phone: (555) 010-7606\",\n      \"note\": \"Email and phone both present.\"\n    },\n    {\n      \"section\": \"AUP-H4\",\n      \"verdict\": \"pass\",\n      \"quote\": \"By purchasing you agree to our terms of sale, privacy policy, and applicable consumer protection law of US.\",\n      \"note\": \"Terms of service present.\"\n    }\n  ],\n  \"overall\": \"prohibited\",\n  \"geo_claim_inconsistent\": false,\n  \"summary\": \"Catalog explicitly sells replica luxury goods (\\\"1:1 mirror quality,\\\" \\\"same hardware as the original,\\\" logos \\\"indistinguishable from boutique originals\\\") \u2014 AUP-01.7 counterfeit override, decline regardless of otherwise-complete hygiene (refund, shipping, contact, terms all present).\"\n}\n```"
+ },
+ "task": "policy_screen"
+}

@@ -85,6 +85,7 @@ def score_merchant(
         _add(res, w, "domain_age_under_180d", "AUP-02.7", f"domain {age}d old")
 
     pp = content.get("policy_pages", {})
+    hygiene_before = res.score
     if not pp.get("refund_policy"):
         _add(res, w, "missing_refund_policy", "AUP-H1", "no refund/return policy found")
     if not pp.get("shipping_policy"):
@@ -95,18 +96,45 @@ def score_merchant(
         _add(res, w, "missing_terms", "AUP-H4", "no terms of service")
     if technical.get("tls_ok") is False:
         _add(res, w, "no_tls", "AUP-H5", "TLS absent/broken")
+    # hygiene cap: page gaps correlate strongly (a thin site is one finding,
+    # not four independent risks); cap their combined contribution (AUP-03)
+    hygiene_pts = res.score - hygiene_before
+    cap = int(w.get("hygiene_cap", 35))
+    if hygiene_pts > cap:
+        res.score -= hygiene_pts - cap
+        res.breakdown.append({"factor": "hygiene_cap", "points": cap - hygiene_pts,
+                              "code": "AUP-03", "why": f"hygiene points capped at {cap}"})
 
-    if screening.get("category") in RESTRICTED_CATEGORIES or "restricted" in v_levels:
+    restricted_core = any(
+        v.get("verdict") == "restricted" and str(v.get("section", "")).startswith("AUP-02")
+        for v in verdicts
+    )
+    restricted_fired = False
+    if screening.get("category") in RESTRICTED_CATEGORIES or restricted_core:
+        restricted_fired = True
+        src = ("restricted-tier category" if screening.get("category") in RESTRICTED_CATEGORIES
+               else "restricted verdict on an AUP-02 section")
         _add(res, w, "restricted_category", "AUP-02",
-             f"category {screening.get('category')} is restricted-tier")
+             f"{src} ({screening.get('category')})")
+    # H6 (identity/consistency) restricted verdicts price as inconsistency;
+    # H1–H5 restricted verdicts add nothing (deterministic checks price hygiene)
+    if any(v.get("verdict") == "restricted" and str(v.get("section", "")).startswith("AUP-H6")
+           for v in verdicts) and not screening.get("geo_claim_inconsistent"):
+        _add(res, w, "geo_claim_inconsistency", "AUP-H6",
+             "cross-page identity/consistency conflict flagged by screening")
 
     themes = screening.get("review_themes", {}) or {}
-    if float(themes.get("non_delivery", 0)) > 0.20:
+    nd = float(themes.get("non_delivery", 0))
+    if nd > 0.40:
+        # overwhelming non-delivery is decline-grade on its own (AUP-04.1)
+        _add(res, w, "review_nondelivery_over_40pct", "AUP-04.ND",
+             f"non-delivery theme share {nd:.0%} (severe tier)")
+    elif nd > 0.20:
         _add(res, w, "review_nondelivery_over_20pct", "AUP-04.ND",
-             f"non-delivery theme share {themes['non_delivery']:.0%}")
-    if float(themes.get("counterfeit", 0)) > 0:
+             f"non-delivery theme share {nd:.0%}")
+    if float(themes.get("counterfeit", 0)) > 0.05:
         _add(res, w, "review_counterfeit_any", "AUP-04.CF",
-             f"counterfeit theme share {themes['counterfeit']:.0%}")
+             f"counterfeit theme share {themes['counterfeit']:.0%} (above corroboration floor)")
     if float(themes.get("refund_refusal", 0)) > 0.15:
         _add(res, w, "review_refund_refusal_over_15pct", "AUP-04.RR",
              f"refund-refusal theme share {themes['refund_refusal']:.0%}")
@@ -118,7 +146,8 @@ def score_merchant(
     # ---- band decision (unless overridden)
     if not res.overrides:
         if res.score <= bands["approve_max"]:
-            res.decision = "approve"
+            # AUP-02 floor: a restricted-tier merchant is never plain-approved
+            res.decision = "conditional" if restricted_fired else "approve"
         elif res.score <= bands["conditional_max"]:
             res.decision = "conditional"
         elif res.score <= bands["manual_max"]:
