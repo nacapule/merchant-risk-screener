@@ -10,6 +10,8 @@ import re
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import numpy as np
 import pandas as pd
@@ -23,6 +25,7 @@ from llm.client import CodexCLIClient, LLMResponse
 from monitor.metrics import compute_metrics
 from monitor.rollup import (
     COLUMNS,
+    COUNT_COLUMNS,
     REPO,
     VALUES,
     ReconciliationError,
@@ -90,6 +93,49 @@ def test_reconcile_names_mismatch_and_both_totals() -> None:
     broken.loc[0, "n_disputes"] = 1
     with pytest.raises(ReconciliationError, match="n_disputes: spine total 1 != event total 0"):
         reconcile(broken, df, event_totals(df))
+
+
+@pytest.mark.parametrize("table,count", [
+    ("orders", "n_orders"), ("chargebacks", "n_disputes"), ("cash_events", "n_refunds"),
+])
+def test_mysql_cutoff_includes_latest_event_lost_by_join(
+        table: str, count: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    df = history([1])
+    sources = {"orders": [pd.Timestamp("2024-01-01")], "chargebacks": [], "cash_events": []}
+    sources[table].append(pd.Timestamp("2024-01-03"))
+
+    def execute(sql: str, params: dict | None = None) -> SimpleNamespace | list[tuple[int, str]]:
+        if sql == "SELECT merchant_id, created_at FROM merchants":
+            return [(1, "2024-01-01")]
+        assert "JOIN" not in sql.upper()
+        source = next(name for name in sources if f"FROM {name}" in sql)
+        if source == "orders":
+            assert "status='approved'" in sql
+        if source == "cash_events":
+            assert "kind='refund'" in sql
+        if "MAX(" in sql:
+            assert "DATE(" in sql
+            value = max(sources[source], default=None)
+        else:
+            assert params is not None
+            value = sum(date < params["end"] for date in sources[source])
+        return SimpleNamespace(scalar_one=lambda: value)
+
+    engine, conn = MagicMock(), MagicMock()
+    engine.connect.return_value.__enter__.return_value = conn
+    conn.execute.side_effect = execute
+    monkeypatch.setitem(sys.modules, "sqlalchemy", SimpleNamespace(
+        create_engine=lambda url: engine, text=lambda sql: sql))
+    monkeypatch.setattr(pd, "read_sql", lambda sql, conn, coerce_float: df.copy())
+    loaded = load_events("mysql+pymysql://fake:fake@localhost/fake")
+    meta = loaded.attrs["meta"]
+    assert meta["as_of"] == "2024-01-03"
+    expected = event_totals(df)
+    expected[count] += 1
+    assert meta["counts"] == expected
+    with pytest.raises(ReconciliationError, match=f"{count}: event total .* != source total"):
+        reconcile(build_spine(loaded, meta["as_of"]), loaded, meta["counts"])
+    engine.dispose.assert_called_once()
 
 
 def test_export_is_deterministic_with_sidecar_counts_and_hash(tmp_path: Path) -> None:
@@ -269,7 +315,7 @@ def world_file(tmp_path: Path) -> dict:
     return evaluation.read_world(path)
 
 
-def test_selection_refuses_untruncated_data_and_cli_clips_first(
+def test_selection_refuses_untruncated_data_and_cli_clips_before_metrics(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     df = events(history([2] * 400).to_dict("records")
                 + history([2] * 400, mid=2).to_dict("records"))
@@ -289,6 +335,7 @@ def test_selection_refuses_untruncated_data_and_cli_clips_first(
     monkeypatch.setattr(evaluation, "load_events", lambda path: df)
     monkeypatch.setattr(evaluation, "read_world", lambda: world)
     actual = evaluation.select_dev
+    actual_metrics = evaluation.compute_metrics
     seen = []
 
     def guarded(rows: pd.DataFrame, cfg: dict, facts: dict) -> dict:
@@ -296,12 +343,41 @@ def test_selection_refuses_untruncated_data_and_cli_clips_first(
         seen.append(rows.d.max())
         return actual(rows, cfg, facts)
 
+    def guarded_metrics(spine: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+        assert spine.d.max() <= evaluation.DEV_AS_OF
+        return actual_metrics(spine, cfg)
+
     monkeypatch.setattr(evaluation, "select_dev", guarded)
+    monkeypatch.setattr(evaluation, "compute_metrics", guarded_metrics)
     monkeypatch.setattr(sys, "argv", ["monitor.evaluate", "select", "--events", "synthetic.gz"])
     evaluation.main()
     assert seen == [evaluation.DEV_AS_OF]
     saved = json.loads((root / "reports/monitoring_selection_dev.json").read_text())
     assert saved["selected_rule_set"] == "c0"
+
+
+@pytest.mark.parametrize("count", COUNT_COLUMNS)
+def test_select_cli_refuses_hash_valid_export_with_wrong_sidecar_counts(
+        count: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str]) -> None:
+    df = events([{"merchant_id": 1, "d": "2024-10-31", "n_orders": 1},
+                 {"merchant_id": 1, "d": "2024-11-02", "n_orders": 1,
+                  "n_disputes": 1, "n_refunds": 1}])
+    path = tmp_path / "events.csv.gz"
+    export_events(path, df)
+    sidecar = Path(f"{path}.meta.json")
+    meta = json.loads(sidecar.read_text())
+    meta["counts"][count] += 1
+    sidecar.write_text(json.dumps(meta))
+    assert event_totals(load_events(path)) == event_totals(df)
+    monkeypatch.setattr(evaluation, "REPO", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["monitor.evaluate", "select", "--events", str(path)])
+    with pytest.raises(SystemExit) as exc:
+        evaluation.main()
+    assert exc.value.code == 2
+    message = f"event totals {event_totals(df)} != source totals {meta['counts']}"
+    assert message in capsys.readouterr().err
+    assert not (tmp_path / "reports/monitoring_selection_dev.json").exists()
 
 
 def test_selection_ranking_and_infeasible_control(tmp_path: Path) -> None:

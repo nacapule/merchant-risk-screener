@@ -210,10 +210,12 @@ def main() -> None:
     args = ap.parse_args()
     events = load_events(args.events)
     if args.command == "select":
-        # This is deliberately the first operation on the loaded event rows.
+        # Check export totals before clipping; metrics remain dev-only.
+        totals = event_totals(events)
+        counts = events.attrs["meta"]["counts"]
+        if totals != counts:
+            ap.exit(2, f"monitor: event totals {totals} != source totals {counts}\n")
         events = events.loc[events.d.le(DEV_AS_OF)].copy()
-        events.attrs["meta"] = {**events.attrs["meta"], "as_of": str(DEV_AS_OF.date()),
-                                "counts": event_totals(events)}
         assert not events.d.gt(DEV_AS_OF).any()
     cfg = yaml.safe_load((REPO / "config.yaml").read_text())
     world = read_world()

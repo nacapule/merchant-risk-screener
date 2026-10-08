@@ -39,6 +39,19 @@ def source_info(url: str) -> dict:
             "database": parsed.path.lstrip("/")}
 
 
+def source_as_of(conn: Any) -> str:
+    """Source dates keep the cutoff from hiding events lost by extraction joins."""
+    from sqlalchemy import text
+
+    queries = [
+        "SELECT MAX(DATE(ts)) FROM orders WHERE status='approved'",
+        "SELECT MAX(DATE(opened_ts)) FROM chargebacks",
+        "SELECT MAX(DATE(known_at)) FROM cash_events WHERE kind='refund'",
+    ]
+    dates = [conn.execute(text(sql)).scalar_one() for sql in queries]
+    return str(max(day(date) for date in dates if date is not None).date())
+
+
 def source_counts(conn: Any, as_of: str | pd.Timestamp) -> dict[str, int]:
     """Independent source totals expose rows lost by extraction joins."""
     from sqlalchemy import text
@@ -100,7 +113,7 @@ def load_events(source: str | Path | None = None) -> pd.DataFrame:
                                            conn, coerce_float=False))
             if events.empty:
                 raise ValueError("no events; specify an exported history")
-            as_of = str(events.d.max().date())
+            as_of = source_as_of(conn)
             onboarding = {str(mid): str(created) for mid, created in
                           conn.execute(sa.text(ONBOARDING_SQL))}
             counts = source_counts(conn, as_of)

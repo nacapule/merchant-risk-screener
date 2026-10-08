@@ -24,3 +24,8 @@ jobs:
         run: .venv/bin/python fixtures/generate_fixtures.py
       - name: Full decision matrix (offline, committed cache — no keys)
         run: .venv/bin/python -m score.decisions --offline
+      - name: Monitoring memos (offline, committed cache — no keys)
+        run: |
+          .venv/bin/python -m monitor.memo --offline
+          git ls-files --error-unmatch reports/monitoring_memos.md
+          git diff --exit-code -- reports/monitoring_memos.md
