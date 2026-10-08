@@ -165,3 +165,42 @@ The comparison remains audit-informed, on one synthetic seed. Merchant-level
 results, workload denominators and limits are in
 [`reports/monitoring_evaluation.md`](../reports/monitoring_evaluation.md), backed by
 [`monitoring_evaluation.json`](../reports/monitoring_evaluation.json).
+
+## 4. Iteration 2: chargeback evidence and delivery confirmation
+
+### 4.1 Proposed policy text (written before any iteration-2 code, calibration or run)
+
+Screening now reads a byte-identical snapshot of the policy as it was screened,
+[`screen/prompts/acceptable-use_2026-08.md`](../screen/prompts/acceptable-use_2026-08.md).
+A test re-renders every cached screening prompt from it, so the offline decision matrix
+stays reproducible while AUP-06 changes. AUP-06 is outside screening scope. The live
+[`policy/acceptable-use.md`](../policy/acceptable-use.md) changes only for what the dev
+gate adopts (§4.3); until then this is a proposal.
+
+Proposed AUP-06 bullets (the introduction and the actions ladder stay):
+
+- **06.1 Chargeback rate**: warn at 1.5%, breach at 2.5% of approved orders over 30
+  days. A level is reached when the disputes learned of in the last 30 days are more than
+  that level would plausibly produce at the merchant's 30-day order volume: a Poisson
+  count with mean level × orders reaches at least that many disputes with probability at
+  most 5%. The window needs at least 3 disputes and 20 approved orders. A breach alerts
+  alone; a warning needs a second trigger.
+  *Alternative wording, used only if the registered order in §4.3 reaches it:* the count
+  includes only disputes alleging that goods did not arrive or were not as described.
+  Disputes alleging unauthorized use are counted separately for fraud surveillance and do
+  not trigger 06.1.
+- **06.2** Volume z-score ≥ 3 against the merchant's completed 90-day baseline.
+- **06.3** Average-ticket drift ≥ 2× baseline.
+- **06.4** New-account GMV share ≥ 40% (thin-account concentration). **06.4b** At a
+  merchant less than 90 days after onboarding, a new-account GMV share ≥ 60% alerts alone.
+- **06.5** Refund rate collapse to about zero while disputes rise.
+- **06.6 Delivery confirmation**: the platform settles a merchant when it reports a
+  shipment. A reported shipment is overdue when the carrier has not confirmed delivery
+  within the time by which 95% of the portfolio's carrier-confirmed deliveries arrive.
+  When more of a merchant's shipments from the last seven days that have reached this
+  deadline remain unconfirmed than the portfolio's normal unconfirmed share could
+  plausibly produce, settlement pauses pending delivery evidence. Missing confirmation
+  is a reason to review, not proof of non-delivery: some carriers do not confirm.
+- An alert opens a case; the same merchant opens no new case for 90 days. A
+  delivery-confirmation alert inside an open case escalates it to a settlement-pause
+  review without restarting the 90 days.

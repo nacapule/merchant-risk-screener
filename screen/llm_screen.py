@@ -50,7 +50,8 @@ def categorize(slug: str, site_text: str, *, model: str | None = None,
 
 def policy_screen(slug: str, site_text: str, *, model: str | None = None,
                   prompt_version: str | None = None, offline: bool = False) -> dict[str, Any]:
-    policy_text = (REPO / "policy" / "acceptable-use.md").read_text()
+    # The policy as screened and cached; later AUP-06 changes are out of screening scope.
+    policy_text = (PROMPTS / "acceptable-use_2026-08.md").read_text()
     prompt = _render(
         "policy_screen",
         {"policy_text": policy_text, "site_text": site_text[:24000]},
