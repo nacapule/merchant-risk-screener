@@ -137,3 +137,31 @@ Exposure: 280.6 eligible non-bust-out merchant-quarters.
 
 A next iteration would need a new protocol that addresses the control's
 chargeback workload at low volume.
+
+## 3. Full-period evaluation (after the freeze)
+
+The frozen rules were replayed through 2025-12-29. c0 remains the shipped control:
+its dev workload exceeded the pre-registered ceiling of 5 non-bust-out episodes per
+100 eligible merchant-quarters, so no extension could be selected. c1b is reported
+as the dev-ranked candidate, a secondary result; it does not ship.
+
+| Rule set | Dev caught before closure | Dev lead days | Held-out caught before closure | Held-out lead days |
+| --- | --- | --- | --- | --- |
+| c0 (shipped) | 1 of 4 | 136: 10 | 1 of 4 | 147: 6 |
+| c1b (secondary) | 4 of 4 | 132: 20; 136: 34; 139: 21; 145: 21 | 4 of 4 | 147: 49; 149: 24; 151: 18; 158: 19 |
+
+Both rule sets produce 140 core episodes, with exactly the same non-bust-out
+episodes in each period: dev 50, operating held-out 73, follow-up 9. c1b moves the
+bust-out alerts earlier; 50.2–76.9% of each bust-out's approved sales occur after its
+first alert. The other c0 bust-out alerts occur on or after closure, and every
+bust-out receives a dispute-count flag 6–15 days after closure.
+
+For all six rule sets, prefixes ending 2024-09-30, 2024-12-31 and 2025-05-31
+reproduce the full-history alerts and flags through those dates exactly. Source,
+event and calendar totals also reconcile: 151,268 approved orders, 1,855 disputes
+and no refunds.
+
+The comparison remains audit-informed, on one synthetic seed. Merchant-level
+results, workload denominators and limits are in
+[`reports/monitoring_evaluation.md`](../reports/monitoring_evaluation.md), backed by
+[`monitoring_evaluation.json`](../reports/monitoring_evaluation.json).
