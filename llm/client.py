@@ -193,7 +193,7 @@ class CodexCLIClient:
 
     def __init__(self, binary: str = "codex", effort: str | None = None):
         self.binary = binary
-        self.effort = effort or os.environ.get("CODEX_EFFORT", "medium")
+        self.effort = effort or os.environ.get("CODEX_EFFORT", "high")
 
     def complete(self, prompt: str, model: str, timeout_s: int = 420) -> LLMResponse:
         import tempfile

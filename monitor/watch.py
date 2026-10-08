@@ -1,99 +1,111 @@
-"""Portfolio monitoring: roll up daily merchant metrics (metrics.sql against
-the companion workbench DB, or a CSV export), apply AUP-06 thresholds, and emit
-merchant alerts. Thresholds are modeled on publicly known card-network
-monitoring-program *concepts*; values are illustrative (config `monitor`).
-
-Run: python -m monitor.watch [--csv path]   (CSV: metrics.sql column layout)
-"""
+"""Replay daily monitoring facts; later events cannot rewrite an earlier episode."""
 
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
 import yaml
 
-REPO = Path(__file__).resolve().parent.parent
+from monitor.metrics import compute_metrics
+from monitor.rollup import (
+    REPO,
+    ReconciliationError,
+    build_spine,
+    counts_at,
+    day,
+    export_events,
+    load_events,
+    reconcile,
+)
+from monitor.rules import RULE_SETS, describe, predicates
 
 
-def load_metrics(csv: str | None) -> pd.DataFrame:
-    if csv:
-        return pd.read_csv(csv, parse_dates=["d"])
-    import sqlalchemy as sa
+def json_value(value: Any) -> Any:
+    """Missing metrics serialize as null, while counts and booleans retain their types."""
+    if pd.isna(value):
+        return None
+    if isinstance(value, np.generic):
+        value = value.item()
+    if isinstance(value, float) and not np.isfinite(value):
+        raise ValueError("non-finite monitoring metric")
+    return value
 
-    url = "mysql+pymysql://fraud:fraudpw@127.0.0.1:3306/bnpl"
-    sql = (REPO / "monitor" / "metrics.sql").read_text()
-    with sa.create_engine(url).connect() as c:
-        return pd.read_sql(sa.text(sql), c, parse_dates=["d"])
 
+def evaluate(spine_metrics: pd.DataFrame, cfg: dict, rule_set: str,
+             start: str | None = None) -> dict[str, list[dict]]:
+    """Core alerts and dispute flags each re-arm after their own suppression period.
 
-def evaluate(df: pd.DataFrame, cfg: dict) -> list[dict]:
-    m = cfg["monitor"]
-    alerts: list[dict] = []
-    for mid, g in df.groupby("merchant_id"):
-        g = g.sort_values("d").set_index("d")
-        if len(g) < 14 or g.n_orders.sum() < 30:
-            continue
-        # trailing 30d aggregates vs merchant baseline (first 60 observed days).
-        # cb rate = disputes OPENED in the window / orders in the window — the
-        # honest, lagging version (metrics.sql attributes by opened date).
-        roll_cb = g.n_cbs_opened.rolling("30D").sum() / g.n_orders.rolling("30D").sum()
-        roll_vol = g.n_orders.rolling("30D").sum()
-        roll_ticket = (g.avg_ticket * g.n_orders).rolling("30D").sum() / g.n_orders.rolling(
-            "30D"
-        ).sum()
-        roll_new = (g.new_buyer_share * g.n_orders).rolling("30D").sum() / g.n_orders.rolling(
-            "30D"
-        ).sum()
-        base = g.iloc[: min(60, len(g) // 2)]
-        base_vol_mean = base.n_orders.mean() * 30
-        base_vol_std = max(base.n_orders.std() * np.sqrt(30), 1.0)
-        base_ticket = max(base.avg_ticket.mean(), 1.0)
-
-        latest = g.index.max()
-        window = g.index >= latest - pd.Timedelta(days=60)
-        for d in g.index[window]:
-            cb = float(roll_cb.get(d, 0) or 0)
-            vol_z = float((roll_vol.get(d, 0) - base_vol_mean) / base_vol_std)
-            drift = float(roll_ticket.get(d, base_ticket) / base_ticket)
-            new_share = float(roll_new.get(d, 0) or 0)
-            triggers = []
-            if cb >= m["chargeback_breach"]:
-                triggers.append(f"AUP-06.1 breach: 30d chargeback rate {cb:.1%}")
-            elif cb >= m["chargeback_warn"]:
-                triggers.append(f"AUP-06.1 warn: 30d chargeback rate {cb:.1%}")
-            if vol_z >= m["volume_zscore_alert"]:
-                triggers.append(f"AUP-06.2: volume z={vol_z:.1f} vs baseline")
-            if drift >= m["ticket_drift_alert"]:
-                triggers.append(f"AUP-06.3: avg ticket {drift:.1f}x baseline")
-            if new_share >= m["new_account_gmv_share_alert"]:
-                triggers.append(f"AUP-06.4: new-account share {new_share:.0%}")
-            if len(triggers) >= 2 or any("breach" in t for t in triggers):
-                alerts.append(
-                    {"merchant_id": int(mid), "date": str(d.date()), "triggers": triggers,
-                     "cb_rate_30d": round(cb, 4), "volume_z": round(vol_z, 1),
-                     "ticket_drift": round(drift, 2), "new_share": round(new_share, 3)}
-                )
-                break  # first alerting day per merchant is the story
-    return alerts
+    Replay state before an optional output start, so changing a reporting window
+    never creates an episode that would have been suppressed by earlier history.
+    """
+    result: dict[str, list[dict]] = {"alerts": [], "dispute_count_flags": []}
+    if spine_metrics.empty:
+        return result
+    g = spine_metrics.sort_values(["merchant_id", "d"]).reset_index(drop=True)
+    p = predicates(g, cfg, rule_set)
+    suppression = cfg["monitor"]["episode_suppression_days"]
+    first_output = day(start) if start else None
+    for signal, target in [("core", "alerts"), ("D", "dispute_count_flags")]:
+        last: dict[int, pd.Timestamp] = {}
+        for index in p.index[p[signal]]:
+            row = g.loc[index]
+            mid, date = int(row.merchant_id), row.d
+            if mid in last and (date - last[mid]).days <= suppression:
+                continue
+            last[mid] = date
+            if first_output is not None and date < first_output:
+                continue
+            codes = (["D"] if signal == "D" else
+                     [code for code in ("W", "B", "V", "T", "S", "Y", "F") if p.at[index, code]])
+            metrics = {key: json_value(value) for key, value in row.items()
+                       if key not in ("merchant_id", "d")}
+            result[target].append({"merchant_id": mid, "date": str(date.date()),
+                                   "trigger_codes": codes,
+                                   "triggers": describe(metrics, codes, cfg, rule_set),
+                                   "metrics": metrics})
+        result[target].sort(key=lambda alert: (alert["date"], alert["merchant_id"]))
+    return result
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--csv", default=None)
+    ap.add_argument("--events", type=Path)
+    ap.add_argument("--as-of")
+    ap.add_argument("--rules", choices=RULE_SETS)
+    ap.add_argument("--export-events", type=Path)
+    ap.add_argument("--out", type=Path, default=REPO / "reports/monitoring_alerts.json")
     args = ap.parse_args()
-    cfg = yaml.safe_load(open(REPO / "config.yaml"))
-    df = load_metrics(args.csv)
-    alerts = evaluate(df, cfg)
-    (REPO / "reports").mkdir(exist_ok=True)
-    out = REPO / "reports" / "monitoring_alerts.json"
-    out.write_text(json.dumps(alerts, indent=1))
-    print(f"{len(alerts)} merchant alerts -> {out}")
-    for a in alerts:
-        print(f"  merchant {a['merchant_id']} on {a['date']}: " + "; ".join(a["triggers"]))
+    cfg = yaml.safe_load((REPO / "config.yaml").read_text())
+    rule_set = args.rules or cfg["monitor"]["rule_set"]
+    try:
+        events = load_events(args.events)
+        as_of = day(args.as_of or events.attrs["meta"]["as_of"])
+        if args.events and as_of > day(events.attrs["meta"]["as_of"]):
+            raise ValueError("as_of cannot exceed the event export's observation date")
+        clipped = events.loc[events.d <= as_of].copy()
+        spine = build_spine(clipped, as_of)
+        counts = reconcile(spine, clipped, counts_at(events, as_of))
+        metrics = compute_metrics(spine, cfg)
+        output = evaluate(metrics, cfg, rule_set)
+        output["meta"] = {"rule_set": rule_set, "as_of": str(as_of.date()),
+                          "source": events.attrs["meta"]["source"],
+                          "parameters": cfg["monitor"], "counts": counts,
+                          "money_unit": "cents"}
+        if args.export_events:
+            export_events(args.export_events, events, as_of)
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(output, indent=1, allow_nan=False))
+    except (ReconciliationError, ValueError) as exc:
+        ap.exit(2, f"monitor: {exc}\n")
+    print(f"{len(output['alerts'])} merchant alerts -> {args.out}")
+    for alert in output["alerts"]:
+        print(f"  merchant {alert['merchant_id']} on {alert['date']}: "
+              + "; ".join(alert["triggers"]))
 
 
 if __name__ == "__main__":

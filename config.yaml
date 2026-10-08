@@ -29,8 +29,8 @@ llm:
       model: claude-sonnet-5
       prompt_version: themes_v1
     monitor_memo:               # merchant health metrics -> investigation memo
-      model: claude-sonnet-5
-      prompt_version: monitor_v1
+      model: gpt-6.1-sol
+      prompt_version: monitor_v2
 
 scorecard:
   # weights (one-line rationale each; policy/acceptable-use.md governs intent)
@@ -60,8 +60,29 @@ scorecard:
   #   any insufficient-info verdict -> manual_review (fail-safe direction)
 
 monitor:
+  rule_set: c0                  # corrected control until dev-only selection is registered
+  c3_young: c1a                  # selection records the best young-merchant variant
+  window_days: 30                # trailing window includes the current known-event day
+  baseline_days: 90              # completed prior window excludes the trailing 30 days
+  min_orders_30d: 20             # thin trailing denominators leave rates undefined
+  min_base_days: 30              # require a month of prior calendar history
+  min_base_orders: 20            # prior volume must support a baseline comparison
+  min_days_since_first_order: 14 # eligibility is checked on each replay day
+  min_cum_orders: 30             # require approved volume known by that replay day
+  min_disputes: 3                # rate triggers require several observed disputes
+  min_triggers: 2                # corroborate warnings; a breach can alert alone
+  episode_suppression_days: 90   # days 1 through 90 suppress repeat episodes
+  dispute_flag_min: 3            # auxiliary surveillance regardless of order volume
   chargeback_warn: 0.015          # values illustrative, modeled on public monitoring-
   chargeback_breach: 0.025        # program concepts, not any network's actual numbers
-  volume_zscore_alert: 3.0
-  ticket_drift_alert: 2.0
-  new_account_gmv_share_alert: 0.40
+  volume_zscore_alert: 3.0        # Poisson floor avoids overstating stable low-volume ramps
+  ticket_drift_alert: 2.0        # compare GMV per order with the completed baseline
+  new_account_gmv_share_alert: 0.40 # concentration is weighted by GMV, not order counts
+  refund_base_min: 0.02          # collapse needs a previously material refund rate
+  refund_recent_max: 0.005       # near-zero refunds alongside disputes justify review
+  young_variants:                # predeclared concentration alternatives for dev selection
+    c1a: {age_days: 90, gmv_share: 0.40}  # young merchants with thin-account exposure
+    c1b: {age_days: 90, gmv_share: 0.60}  # stronger concentration in the same age band
+    c1c: {age_days: 180, gmv_share: 0.40} # broader age band at the control share threshold
+  selection_workload_max: 5.0    # episodes per 100 eligible merchant-quarters on dev only
+  merchant_quarter_days: 91.3125 # convert unsuppressed eligible days into quarter exposure
