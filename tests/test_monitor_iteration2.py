@@ -327,3 +327,29 @@ def test_gate_counts_reviews_from_january_only() -> None:
     load = result["sets"]["s3"]["review_load"]
     assert load["case_openings"] == 0
     assert load["eligible_merchant_days"] == len(pd.date_range("2024-01-01", "2024-10-31"))
+
+
+def test_report_with_shipments_and_labels() -> None:
+    df, ships = bustout_world()
+    df.attrs["meta"]["as_of"] = "2024-04-29"
+    ships.attrs["meta"] = {"as_of": "2024-04-29",
+                           "counts": shipment_totals(clip_shipments(ships, "2024-04-29")),
+                           "source": {"file": "synthetic", "sha256": "synthetic"}}
+    world = {"world": "synthetic",
+             "bustouts": [{"merchant_id": 1, "onboarded_at": "2024-01-01",
+                           "closed_at": "2024-04-01"}],
+             "protocol_freezes": {"early": "2024-03-01", "late": "2024-04-10"},
+             "protocol_windows": {"all": ["2024-01-01", "2024-05-01"]}}
+    labels = pd.DataFrame({"merchant_id": [2, 2], "d": pd.to_datetime(["2024-02-01"] * 2),
+                           "reason": ["unauthorized", "item_not_received"],
+                           "basis": ["third_party_fraud", "none"]})
+    cfg = copy.deepcopy(CFG)
+    cfg["monitor"]["rule_set"] = "s1"
+    result = evaluation.report(df, cfg, world, ships, CALIBRATION, labels)
+    s1 = result["rule_sets"]["s1"]
+    assert s1["selected"] and set(result["rule_sets"]) == set(evaluation.ALL_SETS)
+    x = s1["arm_first_firings"]["1"]["X"]
+    assert x["before_closure"] and 0 < x["shipped_gmv_after_share"] < 1
+    assert all(check["passed"] for check in s1["prefix_invariance"].values())
+    assert set(result["case_diagnostics"]) == {"s1", "c0"}
+    json.dumps(result, allow_nan=False)

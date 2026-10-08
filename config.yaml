@@ -30,7 +30,7 @@ llm:
       prompt_version: themes_v1
     monitor_memo:               # merchant health metrics -> investigation memo
       model: gpt-6.1-sol
-      prompt_version: monitor_v2
+      prompt_version: monitor_v3
 
 scorecard:
   # weights (one-line rationale each; policy/acceptable-use.md governs intent)

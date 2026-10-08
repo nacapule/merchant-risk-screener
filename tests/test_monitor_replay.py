@@ -48,3 +48,10 @@ def test_committed_alerts_replay_from_committed_export() -> None:
     replay = evaluate(compute_metrics(spine, cfg, shipments, calibration), cfg, rule_set)
     for key in ("alerts", "escalations", "dispute_count_flags"):
         assert same(replay[key], committed.get(key, [])), key
+
+
+def test_committed_alerts_are_the_configured_rule_set() -> None:
+    committed = json.loads(ALERTS.read_text())
+    cfg = yaml.safe_load((REPO / "config.yaml").read_text())
+    gate = json.loads((REPO / "reports" / "monitoring_gate_dev.json").read_text())
+    assert committed["meta"]["rule_set"] == cfg["monitor"]["rule_set"] == gate["ship_rule_set"]

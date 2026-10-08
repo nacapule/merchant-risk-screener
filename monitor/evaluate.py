@@ -30,7 +30,7 @@ from monitor.rollup import (
     shipment_counts_at,
     source_info,
 )
-from monitor.rules import RULE_SETS, needs_delivery, predicates
+from monitor.rules import ALL_SETS, RULE_SETS, needs_delivery, predicates
 from monitor.watch import evaluate
 
 DEV_START = pd.Timestamp("2024-01-01")
@@ -312,55 +312,136 @@ def gate_dev(events: pd.DataFrame, shipments: pd.DataFrame, cfg: dict, world: di
                        "shipments": shipments.attrs.get("meta", {}).get("source")}}
 
 
-def prefix_checks(events: pd.DataFrame, full: dict, cfg: dict, rule_set: str,
-                  world: dict, as_of: pd.Timestamp) -> dict:
-    checks = {}
+KEYS = ("alerts", "escalations", "dispute_count_flags")
+
+
+def prefix_checks(events: pd.DataFrame, shipments: pd.DataFrame | None,
+                  calibration: dict | None, replays: dict[str, dict], cfg: dict,
+                  world: dict, as_of: pd.Timestamp) -> dict[str, dict]:
+    """Replay each freeze cutoff once; metrics do not depend on the rule set."""
+    checks: dict[str, dict] = {name: {} for name in replays}
     for name, freeze in world["protocol_freezes"].items():
         cutoff = day(freeze) - pd.Timedelta(days=1)
         if cutoff > as_of:
             continue
         clipped = events.loc[events.d.le(cutoff)].copy()
-        replay = evaluate(compute_metrics(build_spine(clipped, cutoff), cfg), cfg, rule_set)
-        expected = {key: [a for a in full[key] if day(a["date"]) <= cutoff]
-                    for key in ("alerts", "escalations", "dispute_count_flags")}
-        if replay != expected:
-            raise ValueError(f"prefix invariance failed for {rule_set} at {cutoff.date()}")
-        checks[name] = {"as_of": str(cutoff.date()), "passed": True,
-                        "alerts": len(replay["alerts"]),
-                        "dispute_count_flags": len(replay["dispute_count_flags"])}
+        ships = None if shipments is None else clip_shipments(shipments, cutoff)
+        metrics = compute_metrics(build_spine(clipped, cutoff), cfg, ships, calibration)
+        for rule_set, full in replays.items():
+            replay = evaluate(metrics, cfg, rule_set)
+            expected = {key: [a for a in full[key] if day(a["date"]) <= cutoff] for key in KEYS}
+            if replay != expected:
+                raise ValueError(f"prefix invariance failed for {rule_set} at {cutoff.date()}")
+            checks[rule_set][name] = {"as_of": str(cutoff.date()), "passed": True,
+                                      **{key: len(replay[key]) for key in KEYS}}
     return checks
 
 
-def report(events: pd.DataFrame, cfg: dict, world: dict) -> dict:
+def remaining_exposure(arms: dict, events: pd.DataFrame,
+                       shipments: pd.DataFrame | None) -> dict:
+    """Sales after each arm's first firing; for X also the shipments settlement still paid."""
+    for mid, row in arms.items():
+        g = events.loc[events.merchant_id.eq(int(mid))]
+        total = int(g.gmv_cents.sum())
+        ships = (None if shipments is None
+                 else shipments.loc[shipments.merchant_id.eq(int(mid))])
+        for arm, first in row.items():
+            if first is None:
+                continue
+            date = day(first["date"])
+            after = int(g.loc[g.d.gt(date), "gmv_cents"].sum())
+            first["approved_gmv_after_share"] = after / total if total else None
+            if arm == "X" and ships is not None:
+                shipped = int(ships.amount_cents.sum())
+                later = int(ships.loc[ships.shipped_d.gt(date), "amount_cents"].sum())
+                first["shipped_gmv_after_cents"] = later
+                first["shipped_gmv_after_share"] = later / shipped if shipped else None
+    return arms
+
+
+FRAUD_BASES = ("third_party_fraud", "account_takeover", "never_pay", "inr_abuse", "promo_abuse")
+
+
+def case_diagnostics(replay: dict, bustout_ids: set[int], labels: pd.DataFrame,
+                     cfg: dict) -> dict:
+    """Describe non-bust-out chargeback cases by dispute reason and adjudicated basis.
+
+    Evaluation only: the bases are known after the fact and never reach the monitor.
+    """
+    window = pd.Timedelta(days=cfg["monitor"]["window_days"] - 1)
+    cases, mix = [], {}
+    for alert in replay["alerts"]:
+        if alert["merchant_id"] in bustout_ids:
+            continue
+        codes = "+".join(alert["trigger_codes"])
+        mix[codes] = mix.get(codes, 0) + 1
+        if not {"B", "W"} & set(alert["trigger_codes"]):
+            continue
+        date = day(alert["date"])
+        mine = labels.loc[labels.merchant_id.eq(alert["merchant_id"])
+                          & labels.d.between(date - window, date)]
+        cases.append({"merchant_id": alert["merchant_id"], "date": alert["date"],
+                      "trigger_codes": alert["trigger_codes"], "disputes": len(mine),
+                      "reasons": mine.reason.value_counts().sort_index().to_dict(),
+                      "bases": mine.basis.value_counts().sort_index().to_dict(),
+                      "fraud_or_abuse_share": (float(mine.basis.isin(FRAUD_BASES).mean())
+                                               if len(mine) else None)})
+    totals = {key: {} for key in ("reasons", "bases")}
+    for case in cases:
+        for key in totals:
+            for name, n in case[key].items():
+                totals[key][name] = totals[key].get(name, 0) + int(n)
+    return {"non_bustout_case_trigger_mix": dict(sorted(mix.items())),
+            "chargeback_cases": len(cases),
+            "chargeback_cases_mostly_fraud_or_abuse": sum(
+                (c["fraud_or_abuse_share"] or 0) >= 0.5 for c in cases),
+            "dispute_reasons": totals["reasons"], "dispute_bases": totals["bases"],
+            "cases": cases}
+
+
+def report(events: pd.DataFrame, cfg: dict, world: dict, shipments: pd.DataFrame | None = None,
+           calibration: dict | None = None, labels: pd.DataFrame | None = None) -> dict:
     as_of = day(events.attrs["meta"]["as_of"])
     events = events.loc[events.d.le(as_of)].copy()
     spine = build_spine(events, as_of)
     counts = reconcile(spine, events, counts_at(events, as_of))
-    metrics = compute_metrics(spine, cfg)
+    if shipments is not None:
+        counts["shipments"] = reconcile_shipments(clip_shipments(shipments, as_of),
+                                                  shipment_counts_at(shipments, as_of))
+        shipments = clip_shipments(shipments, as_of)
+    metrics = compute_metrics(spine, cfg, shipments, calibration)
+    names = [name for name in ALL_SETS if shipments is not None or not needs_delivery(name)]
     bustout_ids = {b["merchant_id"] for b in world["bustouts"]}
     cohorts = {"dev": [b for b in world["bustouts"] if day(b["closed_at"]) < DEV_END],
                "held_out": [b for b in world["bustouts"] if day(b["closed_at"]) >= DEV_END]}
-    periods = {"dev": (events.d.min(), DEV_END),
+    periods = {"dev": (DEV_START, DEV_END),
                "operating_held_out": (DEV_END, OPERATING_END),
                "follow_up": (OPERATING_END, FOLLOWUP_END)}
     windows = {name: (day(start), day(end))
                for name, (start, end) in world["protocol_windows"].items()}
+    replays = {name: evaluate(metrics, cfg, name) for name in names}
+    prefix = prefix_checks(events, shipments, calibration, replays, cfg, world, as_of)
     results = {}
-    for rule_set in RULE_SETS:
-        replay = evaluate(metrics, cfg, rule_set)
-        results[rule_set] = {
-            "selected": rule_set == cfg["monitor"]["rule_set"],
-            "core_episodes": len(replay["alerts"]),
-            "detections": {name: detections(events, replay, cohort)
-                           for name, cohort in cohorts.items()},
-            "non_bustout_workload": {name: workload(metrics, replay["alerts"], bustout_ids,
-                                                   start, end, cfg)
-                                     for name, (start, end) in periods.items()},
-            "protocol_workload": {name: workload(metrics, replay["alerts"], bustout_ids,
-                                                 start, end, cfg)
-                                  for name, (start, end) in windows.items()},
-            "prefix_invariance": prefix_checks(events, replay, cfg, rule_set, world, as_of),
+    for name, replay in replays.items():
+        arms = arm_firsts(metrics, cfg, name, world["bustouts"])
+        results[name] = {
+            "selected": name == cfg["monitor"]["rule_set"],
+            "core_episodes": len(replay["alerts"]), "escalations": len(replay["escalations"]),
+            "detections": {cohort: detections(events, replay, members)
+                           for cohort, members in cohorts.items()},
+            "arm_first_firings": remaining_exposure(arms, events, shipments),
+            "review_load": {period: review_load(metrics, replay, bustout_ids, start, end, cfg)
+                            for period, (start, end) in periods.items()},
+            "protocol_review_load": {window: review_load(metrics, replay, bustout_ids, start,
+                                                         end, cfg)
+                                     for window, (start, end) in windows.items()},
+            "prefix_invariance": prefix[name],
         }
+    diagnostics = {}
+    if labels is not None:
+        diagnostics = {name: case_diagnostics(replays[name], bustout_ids, labels, cfg)
+                       for name in dict.fromkeys([cfg["monitor"]["rule_set"], "c0"])
+                       if name in replays}
     monthly = spine.assign(month=spine.d.dt.strftime("%Y-%m")).groupby("month")
     shares = []
     for month, g in monthly:
@@ -369,9 +450,12 @@ def report(events: pd.DataFrame, cfg: dict, world: dict) -> dict:
                        "new_account_gmv_share": new / total if total else None})
     return {"meta": {"as_of": str(as_of.date()), "parameters": cfg["monitor"],
                      "selected_rule_set": cfg["monitor"]["rule_set"],
-                     "source": events.attrs["meta"]["source"], "counts": counts,
-                     "world": world},
-            "rule_sets": results, "portfolio_new_account_gmv_share_by_month": shares}
+                     "source": events.attrs["meta"]["source"],
+                     "shipments_source": (None if shipments is None
+                                          else shipments.attrs["meta"]["source"]),
+                     "calibration": calibration, "counts": counts, "world": world},
+            "rule_sets": results, "case_diagnostics": diagnostics,
+            "portfolio_new_account_gmv_share_by_month": shares}
 
 
 def _clip_checked(ap: argparse.ArgumentParser, events: pd.DataFrame | None,
@@ -403,6 +487,7 @@ def main() -> None:
     ap.add_argument("command", choices=("select", "calibrate", "gate", "report", "export-labels"))
     ap.add_argument("--events", type=Path)
     ap.add_argument("--shipments", type=Path)
+    ap.add_argument("--world", default="416-baseline")
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
     if args.command == "export-labels":
@@ -448,11 +533,18 @@ def main() -> None:
     if args.command == "select":
         events, _ = _clip_checked(ap, events, None, DEV_AS_OF)
     cfg = yaml.safe_load((REPO / "config.yaml").read_text())
-    world = read_world()
-    output = (select_dev(events, cfg, world) if args.command == "select"
-              else report(events, cfg, world))
-    name = ("monitoring_selection_dev.json" if args.command == "select"
-            else "monitoring_evaluation.json")
+    world = read_world(REPO / f"monitor/eval/world_{args.world}.json")
+    if args.command == "select":
+        output = select_dev(events, cfg, world)
+        name = "monitoring_selection_dev.json"
+    else:
+        shipments = None if args.shipments is None else load_shipments(args.shipments)
+        labels_path = REPO / f"monitor/eval/dispute_labels_{args.world}.csv.gz"
+        output = report(events, cfg, world, shipments,
+                        None if shipments is None else load_calibration(cfg),
+                        load_dispute_labels(labels_path) if labels_path.exists() else None)
+        name = ("monitoring_evaluation.json" if args.world == "416-baseline"
+                else f"monitoring_evaluation_{args.world}.json")
     path = REPO / "reports" / name
     path.write_text(json.dumps(output, indent=1, allow_nan=False))
     if args.command == "select":

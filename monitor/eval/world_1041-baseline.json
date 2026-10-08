@@ -1,0 +1,102 @@
+{
+ "_note": "Evaluation-only facts about the companion BNPL world. Only monitor/evaluate.py reads this file; the monitor itself (extraction, metrics, rules, watch) never sees bust-out ids or closure times.",
+ "world": "1041-baseline",
+ "bnpl_repo": "https://github.com/nacapule/bnpl-fraud-workbench",
+ "bnpl_generated_at": "1db054dacb04da11672d4c4e71267f122ce02e7e",
+ "bnpl_results_code_commit": null,
+ "manifest_identity": "decde07cfa196e682f7956b0ab52093def3a2b49417c773ce0d1346cf7a0bb60",
+ "generator_version": "2.0.0",
+ "config_sha256": "e142c11f43c0aee530aa47bad9a5c24f72037e02071b8896b203fe1bdf588ee8",
+ "seed": 1041,
+ "family": "baseline",
+ "horizon": {
+  "observed_until": "2025-12-29 23:59:59",
+  "order_end": "2025-09-01 00:00:00",
+  "order_start": "2024-01-01 00:00:00"
+ },
+ "protocol_windows": {
+  "warm_up": [
+   "2024-01-01",
+   "2024-04-01"
+  ],
+  "fit": [
+   "2024-04-01",
+   "2024-08-01"
+  ],
+  "gap_1": [
+   "2024-08-01",
+   "2024-10-01"
+  ],
+  "calibration": [
+   "2024-10-01",
+   "2024-11-01"
+  ],
+  "gap_2": [
+   "2024-11-01",
+   "2025-01-01"
+  ],
+  "validation": [
+   "2025-01-01",
+   "2025-04-01"
+  ],
+  "embargo": [
+   "2025-04-01",
+   "2025-06-01"
+  ],
+  "test": [
+   "2025-06-01",
+   "2025-09-01"
+  ],
+  "follow_up": [
+   "2025-09-01",
+   "2025-12-30"
+  ]
+ },
+ "protocol_freezes": {
+  "classifier": "2024-10-01",
+  "calibrator": "2025-01-01",
+  "policy": "2025-06-01"
+ },
+ "bustouts": [
+  {
+   "merchant_id": 133,
+   "onboarded_at": "2024-03-01 12:54:20",
+   "closed_at": "2024-04-23 17:21:42"
+  },
+  {
+   "merchant_id": 137,
+   "onboarded_at": "2024-04-29 15:29:28",
+   "closed_at": "2024-07-04 15:00:55"
+  },
+  {
+   "merchant_id": 142,
+   "onboarded_at": "2024-08-02 09:59:12",
+   "closed_at": "2024-09-30 06:00:54"
+  },
+  {
+   "merchant_id": 145,
+   "onboarded_at": "2024-09-14 21:06:23",
+   "closed_at": "2024-11-24 16:06:08"
+  },
+  {
+   "merchant_id": 149,
+   "onboarded_at": "2024-10-30 20:01:05",
+   "closed_at": "2024-12-25 11:34:21"
+  },
+  {
+   "merchant_id": 152,
+   "onboarded_at": "2025-01-25 12:22:07",
+   "closed_at": "2025-03-24 08:02:05"
+  },
+  {
+   "merchant_id": 154,
+   "onboarded_at": "2025-03-07 08:23:20",
+   "closed_at": "2025-05-17 09:50:08"
+  },
+  {
+   "merchant_id": 157,
+   "onboarded_at": "2025-05-19 20:56:40",
+   "closed_at": "2025-08-03 14:33:14"
+  }
+ ]
+}

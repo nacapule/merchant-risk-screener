@@ -1,0 +1,9 @@
+{
+ "rows": 1947,
+ "sha256": "2d1a40b522b7164da9e545796158e119781ad87f5ef2a1c03052b3ad50c94c15",
+ "source": {
+  "database": "bnpl",
+  "host": "127.0.0.1",
+  "port": 3350
+ }
+}

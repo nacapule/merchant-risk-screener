@@ -343,7 +343,7 @@ def test_selection_refuses_untruncated_data_and_cli_clips_before_metrics(
     (root / "config.yaml").write_text(yaml.safe_dump(CFG))
     monkeypatch.setattr(evaluation, "REPO", root)
     monkeypatch.setattr(evaluation, "load_events", lambda path: df)
-    monkeypatch.setattr(evaluation, "read_world", lambda: world)
+    monkeypatch.setattr(evaluation, "read_world", lambda *path: world)
     actual = evaluation.select_dev
     actual_metrics = evaluation.compute_metrics
     seen = []
@@ -441,7 +441,7 @@ def test_report_on_synthetic_data(tmp_path: Path) -> None:
     cfg = copy.deepcopy(CFG)
     cfg["monitor"]["rule_set"] = "c0"
     result = evaluation.report(df, cfg, world_file(tmp_path))
-    assert set(result["rule_sets"]) == set(RULE_SETS)
+    assert set(result["rule_sets"]) == {*RULE_SETS, "k1", "k2", "s3", "s4"}
     assert result["rule_sets"]["c0"]["selected"]
     assert all(r["prefix_invariance"]["freeze"]["passed"] for r in result["rule_sets"].values())
     json.dumps(result, allow_nan=False)
@@ -518,7 +518,8 @@ def test_memo_uses_new_prompt_full_context_and_codex_effort(
 def test_watch_path_isolation() -> None:
     forbidden = re.compile(r"closed_at|labels|latent_|evaluation_only|monitor[/\.]eval|"
                            r"bustout|bust.out|\b(?:132|136|139|145|147|149|151|158)\b")
-    for name in ("events.sql", "rollup.py", "metrics.py", "rules.py", "watch.py"):
+    for name in ("events.sql", "shipments.sql", "rollup.py", "metrics.py", "rules.py",
+                 "watch.py"):
         assert not forbidden.search((REPO / "monitor" / name).read_text()), name
     assert "installments" not in (REPO / "monitor/events.sql").read_text()
 

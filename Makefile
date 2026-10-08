@@ -34,7 +34,10 @@ monitor-gate:
 	$(PY) -m monitor.evaluate gate --events $(EVENTS) --shipments $(SHIPMENTS)
 
 monitor-eval:
-	$(PY) -m monitor.evaluate report --events reports/monitor_events_416-baseline.csv.gz
+	$(PY) -m monitor.evaluate report --events $(EVENTS) --shipments $(SHIPMENTS)
+	for w in 1041-baseline 2718-baseline; do \
+	  $(PY) -m monitor.evaluate report --world $$w --events reports/monitor_events_$$w.csv.gz \
+	    --shipments reports/monitor_shipments_$$w.csv.gz; done
 
 memos:
 	$(PY) -m monitor.memo

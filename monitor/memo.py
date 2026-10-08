@@ -39,14 +39,20 @@ def main() -> None:
     if args.jobs < 1:
         ap.error("--jobs must be at least 1")
     report = json.loads((REPO / "reports" / "monitoring_alerts.json").read_text())
-    alerts, meta = report["alerts"], report["meta"]
+    meta = report["meta"]
+    # Escalations are reviews too; each sorts after a same-day opening.
+    alerts = sorted(report["alerts"] + report.get("escalations", []),
+                    key=lambda a: (a["date"], a["merchant_id"], "case_opened" in a))
     memos = draft_all(alerts, args.offline, args.jobs)
     lines = ["# Merchant monitoring memos (model-drafted, advisory)", "",
              f"Provenance: rule set {meta['rule_set']} · as_of {meta['as_of']} · "
              f"model {resolve_model('monitor_memo')}", ""]
     for alert, memo in zip(alerts, memos, strict=True):
+        title = (f"settlement-pause escalation {alert['date']} "
+                 f"(case opened {alert['case_opened']})" if "case_opened" in alert
+                 else f"alert episode {alert['date']}")
         lines += [
-            f"## Merchant {alert['merchant_id']} — alert episode {alert['date']}",
+            f"## Merchant {alert['merchant_id']} — {title}",
             f"Triggers: {'; '.join(alert['triggers'])}",
             f"**Recommended action: {memo.get('recommended_action')}**",
             "",
