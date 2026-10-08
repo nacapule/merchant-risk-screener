@@ -1,0 +1,18 @@
+{
+ "world": "416-baseline",
+ "deadline_days": 5,
+ "p_ref": 0.04821589700966275,
+ "lag_shipments": 42924,
+ "reference_shipments": 49734,
+ "reference_unconfirmed": 2287,
+ "reference_observed_share": 0.045984638275626336,
+ "deadline_quantile": 0.95,
+ "reference_upper_confidence": 0.99,
+ "calibration_shipped_by": "2024-07-31",
+ "calibration_known_by": "2024-08-31",
+ "source": {
+  "file": "reports/monitor_shipments_416-baseline.csv.gz",
+  "sha256": "4ce596be74fe12f464f532a19fdc53430404fbe8f8d8c50ba98a08d518d28b86"
+ },
+ "export_as_of": "2025-12-29"
+}
