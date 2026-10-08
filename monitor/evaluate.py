@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import copy
+import gzip
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,7 +13,17 @@ import pandas as pd
 import yaml
 
 from monitor.metrics import compute_metrics
-from monitor.rollup import REPO, build_spine, counts_at, day, event_totals, load_events, reconcile
+from monitor.rollup import (
+    REPO,
+    build_spine,
+    counts_at,
+    day,
+    db_url,
+    event_totals,
+    load_events,
+    reconcile,
+    source_info,
+)
 from monitor.rules import RULE_SETS
 from monitor.watch import evaluate
 
@@ -25,6 +37,41 @@ ADDED_PREDICATES = {"c0": 0, "c1a": 1, "c1b": 1, "c1c": 1, "c2": 1, "c3": 2}
 
 def read_world(path: Path = WORLD_PATH) -> dict:
     return json.loads(path.read_text())
+
+
+LABEL_COLUMNS = ["merchant_id", "d", "reason", "basis"]
+
+
+def export_dispute_labels(path: Path, url: str | None = None) -> pd.DataFrame:
+    """Adjudicated bases describe non-bust-out cases after the fact; the monitor never sees them."""
+    import sqlalchemy as sa
+
+    url = url or db_url()
+    engine = sa.create_engine(url)
+    try:
+        with engine.connect() as conn:
+            labels = pd.read_sql(sa.text((REPO / "monitor/eval/dispute_labels.sql").read_text()),
+                                 conn)[LABEL_COLUMNS]
+    finally:
+        engine.dispose()
+    labels["d"] = pd.to_datetime(labels["d"]).dt.normalize()
+    csv = labels.to_csv(index=False, date_format="%Y-%m-%d", lineterminator="\n")
+    with path.open("wb") as raw, gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as gz:
+        gz.write(csv.encode("utf-8"))
+    meta = {"rows": len(labels), "source": source_info(url),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    Path(f"{path}.meta.json").write_text(json.dumps(meta, indent=1, sort_keys=True))
+    return labels
+
+
+def load_dispute_labels(path: Path) -> pd.DataFrame:
+    meta = json.loads(Path(f"{path}.meta.json").read_text())
+    if hashlib.sha256(path.read_bytes()).hexdigest() != meta["sha256"]:
+        raise ValueError(f"dispute label export SHA-256 mismatch: {path}")
+    labels = pd.read_csv(path, parse_dates=["d"])
+    if len(labels) != meta["rows"]:
+        raise ValueError(f"dispute label export has {len(labels)} rows, sidecar {meta['rows']}")
+    return labels
 
 
 def workload(metrics: pd.DataFrame, alerts: list[dict], bustout_ids: set[int],
@@ -205,9 +252,18 @@ def report(events: pd.DataFrame, cfg: dict, world: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=("select", "report"))
-    ap.add_argument("--events", type=Path, required=True)
+    ap.add_argument("command", choices=("select", "report", "export-labels"))
+    ap.add_argument("--events", type=Path)
+    ap.add_argument("--out", type=Path)
     args = ap.parse_args()
+    if args.command == "export-labels":
+        if args.out is None:
+            ap.error("export-labels needs --out")
+        labels = export_dispute_labels(args.out)
+        print(f"wrote {args.out} ({len(labels)} disputes)")
+        return
+    if args.events is None:
+        ap.error("--events is required")
     events = load_events(args.events)
     if args.command == "select":
         # Check export totals before clipping; metrics remain dev-only.

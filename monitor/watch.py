@@ -19,10 +19,12 @@ from monitor.rollup import (
     counts_at,
     day,
     export_events,
+    export_shipments,
     load_events,
+    load_shipments,
     reconcile,
 )
-from monitor.rules import RULE_SETS, describe, predicates
+from monitor.rules import ITERATION2_FIELDS, RULE_SETS, describe, predicates
 
 
 def json_value(value: Any) -> Any:
@@ -50,6 +52,7 @@ def evaluate(spine_metrics: pd.DataFrame, cfg: dict, rule_set: str,
     p = predicates(g, cfg, rule_set)
     suppression = cfg["monitor"]["episode_suppression_days"]
     first_output = day(start) if start else None
+    hidden = {"merchant_id", "d", *(ITERATION2_FIELDS if rule_set in RULE_SETS else ())}
     for signal, target in [("core", "alerts"), ("D", "dispute_count_flags")]:
         last: dict[int, pd.Timestamp] = {}
         for index in p.index[p[signal]]:
@@ -63,7 +66,7 @@ def evaluate(spine_metrics: pd.DataFrame, cfg: dict, rule_set: str,
             codes = (["D"] if signal == "D" else
                      [code for code in ("W", "B", "V", "T", "S", "Y", "F") if p.at[index, code]])
             metrics = {key: json_value(value) for key, value in row.items()
-                       if key not in ("merchant_id", "d")}
+                       if key not in hidden}
             result[target].append({"merchant_id": mid, "date": str(date.date()),
                                    "trigger_codes": codes,
                                    "triggers": describe(metrics, codes, cfg, rule_set),
@@ -78,6 +81,8 @@ def main() -> None:
     ap.add_argument("--as-of")
     ap.add_argument("--rules", choices=RULE_SETS)
     ap.add_argument("--export-events", type=Path)
+    ap.add_argument("--shipments", type=Path)
+    ap.add_argument("--export-shipments", type=Path)
     ap.add_argument("--out", type=Path, default=REPO / "reports/monitoring_alerts.json")
     args = ap.parse_args()
     cfg = yaml.safe_load((REPO / "config.yaml").read_text())
@@ -98,6 +103,10 @@ def main() -> None:
                           "money_unit": "cents"}
         if args.export_events:
             export_events(args.export_events, events, as_of)
+        if args.export_shipments:
+            if args.events and not args.shipments:
+                raise ValueError("--export-shipments from file exports needs --shipments")
+            export_shipments(args.export_shipments, load_shipments(args.shipments), as_of)
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(output, indent=1, allow_nan=False))
     except (ReconciliationError, ValueError) as exc:

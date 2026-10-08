@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import pandas as pd
 
+from monitor.rollup import REASONS
+
 RULE_SETS = ("c0", "c1a", "c1b", "c1c", "c2", "c3")
+# Iteration-1 sets keep their published record shape, so their alerts and memos replay.
+ITERATION2_FIELDS = (*REASONS,)
 
 
 def predicates(metrics: pd.DataFrame, cfg: dict, rule_set: str) -> pd.DataFrame:

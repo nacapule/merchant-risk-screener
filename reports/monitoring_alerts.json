@@ -12513,7 +12513,7 @@
   "as_of": "2025-12-29",
   "source": {
    "file": "reports/monitor_events_416-baseline.csv.gz",
-   "sha256": "23dbc47496d80c8b6ce900c1e15297c8025c047abfc73f9ee1e70f2085be99da"
+   "sha256": "ef53144c64df44155e58a9067d999a85d6ccbede32e049df91ed0b2a088e17cf"
   },
   "parameters": {
    "rule_set": "c0",
@@ -12557,15 +12557,24 @@
    "spine": {
     "n_orders": 151268,
     "n_disputes": 1855,
-    "n_refunds": 0
+    "n_refunds": 0,
+    "n_disputes_unauthorized": 326,
+    "n_disputes_not_received": 953,
+    "n_disputes_not_as_described": 576
    },
    "events": {
     "n_orders": 151268,
     "n_disputes": 1855,
-    "n_refunds": 0
+    "n_refunds": 0,
+    "n_disputes_unauthorized": 326,
+    "n_disputes_not_received": 953,
+    "n_disputes_not_as_described": 576
    },
    "source": {
     "n_disputes": 1855,
+    "n_disputes_not_as_described": 576,
+    "n_disputes_not_received": 953,
+    "n_disputes_unauthorized": 326,
     "n_orders": 151268,
     "n_refunds": 0
    }

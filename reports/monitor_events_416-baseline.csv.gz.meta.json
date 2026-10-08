@@ -2,6 +2,9 @@
  "as_of": "2025-12-29",
  "counts": {
   "n_disputes": 1855,
+  "n_disputes_not_as_described": 576,
+  "n_disputes_not_received": 953,
+  "n_disputes_unauthorized": 326,
   "n_orders": 151268,
   "n_refunds": 0
  },
@@ -170,7 +173,7 @@
   "98": "2023-02-02 03:50:43",
   "99": "2023-02-20 09:19:54"
  },
- "sha256": "23dbc47496d80c8b6ce900c1e15297c8025c047abfc73f9ee1e70f2085be99da",
+ "sha256": "ef53144c64df44155e58a9067d999a85d6ccbede32e049df91ed0b2a088e17cf",
  "source": {
   "database": "bnpl",
   "host": "127.0.0.1",

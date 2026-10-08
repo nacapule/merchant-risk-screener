@@ -14,9 +14,14 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_DSN = "mysql+pymysql://fraud:fraudpw@127.0.0.1:3306/bnpl"
-VALUES = ["n_orders", "gmv_cents", "n_new_orders", "new_gmv_cents", "n_disputes", "n_refunds"]
+REASONS = {"n_disputes_unauthorized": "unauthorized",
+           "n_disputes_not_received": "item_not_received",
+           "n_disputes_not_as_described": "not_as_described"}
+VALUES = ["n_orders", "gmv_cents", "n_new_orders", "new_gmv_cents", "n_disputes", "n_refunds",
+          *REASONS]
 COLUMNS = ["merchant_id", "d", *VALUES]
-COUNT_COLUMNS = ["n_orders", "n_disputes", "n_refunds"]
+COUNT_COLUMNS = ["n_orders", "n_disputes", "n_refunds", *REASONS]
+SHIPMENT_COLUMNS = ["merchant_id", "order_id", "amount_cents", "shipped_d", "confirmed_d"]
 ONBOARDING_SQL = "SELECT merchant_id, created_at FROM merchants"
 
 
@@ -47,6 +52,8 @@ def source_as_of(conn: Any) -> str:
         "SELECT MAX(DATE(ts)) FROM orders WHERE status='approved'",
         "SELECT MAX(DATE(opened_ts)) FROM chargebacks",
         "SELECT MAX(DATE(known_at)) FROM cash_events WHERE kind='refund'",
+        "SELECT MAX(DATE(known_at)) FROM fulfilments",
+        "SELECT MAX(DATE(known_at)) FROM deliveries",
     ]
     dates = [conn.execute(text(sql)).scalar_one() for sql in queries]
     return str(max(day(date) for date in dates if date is not None).date())
@@ -61,6 +68,23 @@ def source_counts(conn: Any, as_of: str | pd.Timestamp) -> dict[str, int]:
         "n_disputes": "SELECT COUNT(*) FROM chargebacks WHERE opened_ts < :end",
         "n_refunds": """SELECT COUNT(DISTINCT order_id, merchant_id, DATE(known_at))
                         FROM cash_events WHERE kind='refund' AND known_at < :end""",
+        **{col: f"SELECT COUNT(*) FROM chargebacks WHERE opened_ts < :end AND reason = '{reason}'"
+           for col, reason in REASONS.items()},
+    }
+    end = (day(as_of) + pd.Timedelta(days=1)).to_pydatetime()
+    return {key: int(conn.execute(text(sql), {"end": end}).scalar_one())
+            for key, sql in queries.items()}
+
+
+def shipment_source_counts(conn: Any, as_of: str | pd.Timestamp) -> dict[str, int]:
+    """Count shipped and carrier-confirmed orders independently of the extraction join."""
+    from sqlalchemy import text
+
+    queries = {
+        "n_shipments": "SELECT COUNT(DISTINCT order_id) FROM fulfilments WHERE known_at < :end",
+        "n_confirmed": """SELECT COUNT(DISTINCT dl.order_id) FROM deliveries dl
+                          JOIN fulfilments f ON f.order_id = dl.order_id
+                          WHERE dl.known_at < :end AND f.known_at < :end""",
     }
     end = (day(as_of) + pd.Timedelta(days=1)).to_pydatetime()
     return {key: int(conn.execute(text(sql), {"end": end}).scalar_one())
@@ -84,6 +108,8 @@ def _canonical(events: pd.DataFrame) -> pd.DataFrame:
         events[col] = numeric.astype("int64")
     if events.duplicated(["merchant_id", "d"]).any():
         raise ValueError("events must have one row per merchant-day")
+    if not events[list(REASONS)].sum(axis=1).eq(events.n_disputes).all():
+        raise ReconciliationError("dispute reasons must sum to n_disputes on every row")
     events = events.sort_values(["merchant_id", "d"]).reset_index(drop=True)
     events.attrs = attrs
     return events
@@ -193,3 +219,115 @@ def reconcile(spine: pd.DataFrame, events: pd.DataFrame, counts: dict[str, int])
             raise ReconciliationError(
                 f"{col}: event total {events_counts[col]} != source total {counts[col]}")
     return {"spine": spine_counts, "events": events_counts, "source": counts}
+
+
+def _canonical_shipments(shipments: pd.DataFrame) -> pd.DataFrame:
+    attrs = shipments.attrs.copy()
+    shipments = shipments[SHIPMENT_COLUMNS].copy()
+    for col in ("shipped_d", "confirmed_d"):
+        shipments[col] = pd.to_datetime(shipments[col]).dt.normalize()
+    if shipments["shipped_d"].isna().any():
+        raise ValueError("shipment dates must be present")
+    for col in ("merchant_id", "order_id", "amount_cents"):
+        numeric = pd.to_numeric(shipments[col])
+        if numeric.isna().any() or (numeric % 1 != 0).any() or (numeric < 0).any():
+            raise ValueError(f"{col} must contain nonnegative integers")
+        shipments[col] = numeric.astype("int64")
+    if shipments.order_id.duplicated().any():
+        raise ValueError("shipments must have one row per order")
+    shipments = shipments.sort_values(["merchant_id", "order_id"]).reset_index(drop=True)
+    shipments.attrs = attrs
+    return shipments
+
+
+def clip_shipments(shipments: pd.DataFrame, as_of: str | pd.Timestamp) -> pd.DataFrame:
+    """Keep what was known by the end of as_of; a later confirmation stays unknown."""
+    cutoff = day(as_of)
+    clipped = shipments.loc[shipments.shipped_d.le(cutoff)].copy()
+    clipped["confirmed_d"] = clipped.confirmed_d.where(clipped.confirmed_d.le(cutoff))
+    clipped.attrs = shipments.attrs.copy()
+    return clipped
+
+
+def shipment_totals(shipments: pd.DataFrame) -> dict[str, int]:
+    return {"n_shipments": len(shipments), "n_confirmed": int(shipments.confirmed_d.notna().sum())}
+
+
+def reconcile_shipments(shipments: pd.DataFrame, counts: dict[str, int]) -> dict:
+    totals = shipment_totals(shipments)
+    for key, value in totals.items():
+        if value != counts[key]:
+            raise ReconciliationError(f"{key}: export total {value} != source total {counts[key]}")
+    return {"shipments": totals, "source": counts}
+
+
+def load_shipments(source: str | Path | None = None) -> pd.DataFrame:
+    """One row per shipped order with the days the shipment and confirmation became known."""
+    if source is not None and "://" not in str(source):
+        path = Path(source)
+        meta = json.loads(Path(f"{path}.meta.json").read_text())
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest != meta["sha256"]:
+            raise ValueError(f"shipment export SHA-256 mismatch: {path}")
+        shipments = _canonical_shipments(pd.read_csv(path))
+        shipments.attrs["meta"] = {**meta, "source": {"file": str(path), "sha256": digest}}
+        if not shipments.empty and shipments.shipped_d.max() > day(meta["as_of"]):
+            raise ValueError("shipment export contains dates after its as_of")
+        return shipments
+
+    import sqlalchemy as sa
+
+    url = str(source) if source is not None else db_url()
+    engine = sa.create_engine(url)
+    try:
+        with engine.connect() as conn:
+            shipments = _canonical_shipments(pd.read_sql(
+                sa.text((REPO / "monitor/shipments.sql").read_text()), conn,
+                coerce_float=False))
+            as_of = source_as_of(conn)
+            counts = shipment_source_counts(conn, as_of)
+    finally:
+        engine.dispose()
+    shipments.attrs["meta"] = {"as_of": as_of, "counts": counts, "source": source_info(url)}
+    shipments.attrs["db_url"] = url
+    return shipments
+
+
+def shipment_counts_at(shipments: pd.DataFrame, as_of: str | pd.Timestamp) -> dict[str, int]:
+    """Earlier file cutoffs can reconcile only against the exported rows."""
+    meta = shipments.attrs["meta"]
+    if "file" in meta["source"]:
+        return (meta["counts"] if day(as_of) == day(meta["as_of"])
+                else shipment_totals(clip_shipments(shipments, as_of)))
+    import sqlalchemy as sa
+
+    engine = sa.create_engine(shipments.attrs.get("db_url", db_url()))
+    try:
+        with engine.connect() as conn:
+            return shipment_source_counts(conn, as_of)
+    finally:
+        engine.dispose()
+
+
+def export_shipments(path: str | Path, shipments: pd.DataFrame | None = None,
+                     as_of: str | pd.Timestamp | None = None) -> pd.DataFrame:
+    """Fixed CSV order and a zero gzip timestamp make repeated exports byte-identical."""
+    shipments = load_shipments() if shipments is None else shipments
+    meta = shipments.attrs["meta"]
+    cutoff = day(as_of or meta["as_of"])
+    if "file" in meta["source"] and cutoff > day(meta["as_of"]):
+        raise ValueError("export as_of cannot exceed the source observation date")
+    counts = shipment_counts_at(shipments, cutoff)
+    exported = _canonical_shipments(clip_shipments(shipments, cutoff))
+    reconcile_shipments(exported, counts)
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    csv = exported.to_csv(index=False, date_format="%Y-%m-%d", lineterminator="\n")
+    with path.open("wb") as raw, gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as gz:
+        gz.write(csv.encode("utf-8"))
+    meta = {**meta, "as_of": str(cutoff.date()), "counts": counts,
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    Path(f"{path}.meta.json").write_text(
+        json.dumps(meta, indent=1, sort_keys=True, allow_nan=False))
+    exported.attrs["meta"] = meta
+    return exported

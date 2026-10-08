@@ -1,0 +1,13 @@
+{
+ "as_of": "2025-12-29",
+ "counts": {
+  "n_confirmed": 148120,
+  "n_shipments": 151268
+ },
+ "sha256": "4ce596be74fe12f464f532a19fdc53430404fbe8f8d8c50ba98a08d518d28b86",
+ "source": {
+  "database": "bnpl",
+  "host": "127.0.0.1",
+  "port": 3350
+ }
+}

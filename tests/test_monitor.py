@@ -26,6 +26,7 @@ from monitor.metrics import compute_metrics
 from monitor.rollup import (
     COLUMNS,
     COUNT_COLUMNS,
+    REASONS,
     REPO,
     VALUES,
     ReconciliationError,
@@ -48,6 +49,8 @@ def events(rows: list[dict], as_of: str | None = None) -> pd.DataFrame:
         if col not in df:
             df[col] = 0
     df = df[COLUMNS].fillna(0)
+    if not any(row.keys() & REASONS.keys() for row in rows):
+        df["n_disputes_not_received"] = df["n_disputes"]
     df["d"] = pd.to_datetime(df["d"])
     for col in ["merchant_id", *VALUES]:
         df[col] = df[col].astype("int64")
@@ -80,7 +83,9 @@ def test_spine_keeps_dispute_and_refund_days_without_orders() -> None:
     assert spine.loc[spine.d.eq("2024-01-03"), "n_orders"].sum() == 0
     assert spine.n_disputes.sum() == 3 and spine.n_refunds.sum() == 2
     assert all(spine[col].dtype == np.dtype("int64") for col in VALUES)
-    result = reconcile(spine, df, {"n_orders": 34, "n_disputes": 3, "n_refunds": 2})
+    result = reconcile(spine, df, {**dict.fromkeys(COUNT_COLUMNS, 0), "n_orders": 34,
+                                   "n_disputes": 3, "n_refunds": 2,
+                                   "n_disputes_not_received": 3})
     assert result["spine"] == result["events"] == result["source"]
 
 
@@ -88,7 +93,7 @@ def test_reconcile_names_mismatch_and_both_totals() -> None:
     df = history([1, 1])
     with pytest.raises(ReconciliationError, match="n_orders: event total 2 != source total 3"):
         reconcile(build_spine(df, "2024-01-03"), df,
-                  {"n_orders": 3, "n_disputes": 0, "n_refunds": 0})
+                  {**dict.fromkeys(COUNT_COLUMNS, 0), "n_orders": 3})
     broken = build_spine(df, "2024-01-03")
     broken.loc[0, "n_disputes"] = 1
     with pytest.raises(ReconciliationError, match="n_disputes: spine total 1 != event total 0"):
@@ -101,7 +106,8 @@ def test_reconcile_names_mismatch_and_both_totals() -> None:
 def test_mysql_cutoff_includes_latest_event_lost_by_join(
         table: str, count: str, monkeypatch: pytest.MonkeyPatch) -> None:
     df = history([1])
-    sources = {"orders": [pd.Timestamp("2024-01-01")], "chargebacks": [], "cash_events": []}
+    sources = {"orders": [pd.Timestamp("2024-01-01")], "chargebacks": [], "cash_events": [],
+               "fulfilments": [], "deliveries": []}
     sources[table].append(pd.Timestamp("2024-01-03"))
 
     def execute(sql: str, params: dict | None = None) -> SimpleNamespace | list[tuple[int, str]]:
@@ -116,6 +122,8 @@ def test_mysql_cutoff_includes_latest_event_lost_by_join(
         if "MAX(" in sql:
             assert "DATE(" in sql
             value = max(sources[source], default=None)
+        elif "reason =" in sql and "'item_not_received'" not in sql:
+            value = 0
         else:
             assert params is not None
             value = sum(date < params["end"] for date in sources[source])
@@ -132,6 +140,8 @@ def test_mysql_cutoff_includes_latest_event_lost_by_join(
     assert meta["as_of"] == "2024-01-03"
     expected = event_totals(df)
     expected[count] += 1
+    if count == "n_disputes":
+        expected["n_disputes_not_received"] += 1
     assert meta["counts"] == expected
     with pytest.raises(ReconciliationError, match=f"{count}: event total .* != source total"):
         reconcile(build_spine(loaded, meta["as_of"]), loaded, meta["counts"])
@@ -508,3 +518,10 @@ def test_watch_path_isolation() -> None:
     for name in ("events.sql", "rollup.py", "metrics.py", "rules.py", "watch.py"):
         assert not forbidden.search((REPO / "monitor" / name).read_text()), name
     assert "installments" not in (REPO / "monitor/events.sql").read_text()
+
+
+def test_dispute_reasons_must_sum_to_the_total() -> None:
+    df = events([{"merchant_id": 1, "d": "2024-01-01", "n_disputes": 2,
+                  "n_disputes_unauthorized": 1}])
+    with pytest.raises(ReconciliationError, match="dispute reasons must sum"):
+        build_spine(df, "2024-01-02")
