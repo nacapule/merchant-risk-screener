@@ -60,7 +60,7 @@ scorecard:
   #   any insufficient-info verdict -> manual_review (fail-safe direction)
 
 monitor:
-  rule_set: c0                  # dev selection (monitor/ITERATION.md §2): control over ceiling; c0 ships
+  rule_set: s1                  # adopted by the iteration-2 dev gate (monitor/ITERATION.md §4.3)
   c3_young: c1b                  # best young-merchant variant on dev (selection output)
   window_days: 30                # trailing window includes the current known-event day
   baseline_days: 90              # completed prior window excludes the trailing 30 days

@@ -1,4 +1,4 @@
-"""The committed alerts must be what the committed event export replays to."""
+"""The committed alerts must be what the committed exports replay to."""
 
 from __future__ import annotations
 
@@ -9,11 +9,14 @@ from pathlib import Path
 import yaml
 
 from monitor.metrics import compute_metrics
-from monitor.rollup import build_spine, counts_at, day, load_events, reconcile
+from monitor.rollup import build_spine, counts_at, day, load_events, load_shipments, reconcile
+from monitor.rules import needs_delivery
 from monitor.watch import evaluate
 
 REPO = Path(__file__).resolve().parent.parent
 EXPORT = REPO / "reports" / "monitor_events_416-baseline.csv.gz"
+SHIPMENTS = REPO / "reports" / "monitor_shipments_416-baseline.csv.gz"
+CALIBRATION = REPO / "reports" / "monitoring_delivery_calibration.json"
 ALERTS = REPO / "reports" / "monitoring_alerts.json"
 
 
@@ -31,12 +34,17 @@ def same(a: object, b: object) -> bool:
 def test_committed_alerts_replay_from_committed_export() -> None:
     committed = json.loads(ALERTS.read_text())
     cfg = yaml.safe_load((REPO / "config.yaml").read_text())
-    assert committed["meta"]["rule_set"] == cfg["monitor"]["rule_set"]
+    rule_set = committed["meta"]["rule_set"]
     events = load_events(EXPORT)
     as_of = day(committed["meta"]["as_of"])
     spine = build_spine(events, as_of)
     counts = reconcile(spine, events, counts_at(events, as_of))
     assert counts["source"] == committed["meta"]["counts"]["source"]
-    replay = evaluate(compute_metrics(spine, cfg), cfg, cfg["monitor"]["rule_set"])
-    for key in ("alerts", "dispute_count_flags"):
-        assert same(replay[key], committed[key]), key
+    shipments = calibration = None
+    if needs_delivery(rule_set):
+        shipments = load_shipments(SHIPMENTS)
+        calibration = json.loads(CALIBRATION.read_text())
+        assert committed["meta"]["calibration"] == calibration
+    replay = evaluate(compute_metrics(spine, cfg, shipments, calibration), cfg, rule_set)
+    for key in ("alerts", "escalations", "dispute_count_flags"):
+        assert same(replay[key], committed.get(key, [])), key

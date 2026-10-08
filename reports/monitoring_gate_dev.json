@@ -1,0 +1,1376 @@
+{
+ "as_of": "2024-10-31",
+ "ladder": [
+  "s1",
+  "s2",
+  "s3",
+  "s4"
+ ],
+ "adopted_rule_set": "s1",
+ "ship_rule_set": "s1",
+ "reason": "first registered set within both ceilings",
+ "calibration": {
+  "world": "416-baseline",
+  "deadline_days": 5,
+  "p_ref": 0.04821589700966275,
+  "lag_shipments": 42924,
+  "reference_shipments": 49734,
+  "reference_unconfirmed": 2287,
+  "reference_observed_share": 0.045984638275626336,
+  "deadline_quantile": 0.95,
+  "reference_upper_confidence": 0.99,
+  "calibration_shipped_by": "2024-07-31",
+  "calibration_known_by": "2024-08-31",
+  "source": {
+   "file": "reports/monitor_shipments_416-baseline.csv.gz",
+   "sha256": "4ce596be74fe12f464f532a19fdc53430404fbe8f8d8c50ba98a08d518d28b86"
+  },
+  "export_as_of": "2025-12-29"
+ },
+ "sets": {
+  "s1": {
+   "review_load": {
+    "episodes": 11,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 890,
+    "exposure_days": 28337,
+    "eligible_merchant_quarters": 310.3299110198494,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 3.5446148145534107,
+    "non_bustout_alerts_with_at_least_3_disputes": 6,
+    "case_openings": 11,
+    "escalations": 0,
+    "reviews": 11,
+    "delivery_reviews": 0,
+    "review_load": 3.5446148145534107,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 4,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-03-17",
+      "caught_before_closure": true,
+      "lead_days": 20,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 1240157,
+      "exposure_after_alert_share": 0.6466796681493224
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-05-23",
+      "caught_before_closure": true,
+      "lead_days": 34,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 1769278,
+      "exposure_after_alert_share": 0.6832819568530252
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-08-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 2265782,
+      "exposure_after_alert_share": 0.5023805506363397
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": "2024-10-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": 2406233,
+      "exposure_after_alert_share": 0.5331496811271546
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-03-17",
+      "days_before_closure": 20,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-04-04",
+      "days_before_closure": 2,
+      "before_closure": true
+     }
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": {
+      "date": "2024-05-23",
+      "days_before_closure": 34,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-06-21",
+      "days_before_closure": 5,
+      "before_closure": true
+     }
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-08-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-08-29",
+      "days_before_closure": 1,
+      "before_closure": true
+     }
+    },
+    "145": {
+     "control": null,
+     "Y": {
+      "date": "2024-10-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-10-31",
+      "days_before_closure": -1,
+      "before_closure": false
+     }
+    }
+   },
+   "escalations": 4,
+   "core_episodes": 15
+  },
+  "s2": {
+   "review_load": {
+    "episodes": 6,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 487,
+    "exposure_days": 28740,
+    "eligible_merchant_quarters": 314.7433264887064,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 1.9063152400835073,
+    "non_bustout_alerts_with_at_least_3_disputes": 1,
+    "case_openings": 6,
+    "escalations": 0,
+    "reviews": 6,
+    "delivery_reviews": 0,
+    "review_load": 1.9063152400835073,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 4,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-03-17",
+      "caught_before_closure": true,
+      "lead_days": 20,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 1240157,
+      "exposure_after_alert_share": 0.6466796681493224
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-05-23",
+      "caught_before_closure": true,
+      "lead_days": 34,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 1769278,
+      "exposure_after_alert_share": 0.6832819568530252
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-08-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 2265782,
+      "exposure_after_alert_share": 0.5023805506363397
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": "2024-10-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": 2406233,
+      "exposure_after_alert_share": 0.5331496811271546
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-03-17",
+      "days_before_closure": 20,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-04-04",
+      "days_before_closure": 2,
+      "before_closure": true
+     }
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": {
+      "date": "2024-05-23",
+      "days_before_closure": 34,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-06-21",
+      "days_before_closure": 5,
+      "before_closure": true
+     }
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-08-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-08-29",
+      "days_before_closure": 1,
+      "before_closure": true
+     }
+    },
+    "145": {
+     "control": null,
+     "Y": {
+      "date": "2024-10-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": {
+      "date": "2024-10-31",
+      "days_before_closure": -1,
+      "before_closure": false
+     }
+    }
+   },
+   "escalations": 4,
+   "core_episodes": 10
+  },
+  "s3": {
+   "review_load": {
+    "episodes": 11,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 890,
+    "exposure_days": 28337,
+    "eligible_merchant_quarters": 310.3299110198494,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 3.5446148145534107,
+    "non_bustout_alerts_with_at_least_3_disputes": 6,
+    "case_openings": 11,
+    "escalations": 0,
+    "reviews": 11,
+    "delivery_reviews": 0,
+    "review_load": 3.5446148145534107,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 4,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-03-17",
+      "caught_before_closure": true,
+      "lead_days": 20,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 1240157,
+      "exposure_after_alert_share": 0.6466796681493224
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-05-23",
+      "caught_before_closure": true,
+      "lead_days": 34,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 1769278,
+      "exposure_after_alert_share": 0.6832819568530252
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-08-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 2265782,
+      "exposure_after_alert_share": 0.5023805506363397
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": "2024-10-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": 2406233,
+      "exposure_after_alert_share": 0.5331496811271546
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-03-17",
+      "days_before_closure": 20,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": {
+      "date": "2024-05-23",
+      "days_before_closure": 34,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-08-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "145": {
+     "control": null,
+     "Y": {
+      "date": "2024-10-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": null
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 15
+  },
+  "s4": {
+   "review_load": {
+    "episodes": 6,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 487,
+    "exposure_days": 28740,
+    "eligible_merchant_quarters": 314.7433264887064,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 1.9063152400835073,
+    "non_bustout_alerts_with_at_least_3_disputes": 1,
+    "case_openings": 6,
+    "escalations": 0,
+    "reviews": 6,
+    "delivery_reviews": 0,
+    "review_load": 1.9063152400835073,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 4,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-03-17",
+      "caught_before_closure": true,
+      "lead_days": 20,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 1240157,
+      "exposure_after_alert_share": 0.6466796681493224
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-05-23",
+      "caught_before_closure": true,
+      "lead_days": 34,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 1769278,
+      "exposure_after_alert_share": 0.6832819568530252
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-08-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 2265782,
+      "exposure_after_alert_share": 0.5023805506363397
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": "2024-10-09",
+      "caught_before_closure": true,
+      "lead_days": 21,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": 2406233,
+      "exposure_after_alert_share": 0.5331496811271546
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-03-17",
+      "days_before_closure": 20,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": {
+      "date": "2024-05-23",
+      "days_before_closure": 34,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": {
+      "date": "2024-08-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": null
+    },
+    "145": {
+     "control": null,
+     "Y": {
+      "date": "2024-10-09",
+      "days_before_closure": 21,
+      "before_closure": true
+     },
+     "X": null
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 10
+  },
+  "k1": {
+   "review_load": {
+    "episodes": 11,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 890,
+    "exposure_days": 28337,
+    "eligible_merchant_quarters": 310.3299110198494,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 3.5446148145534107,
+    "non_bustout_alerts_with_at_least_3_disputes": 6,
+    "case_openings": 11,
+    "escalations": 0,
+    "reviews": 11,
+    "delivery_reviews": 0,
+    "review_load": 3.5446148145534107,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 1,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-04-08",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-06-16",
+      "caught_before_closure": true,
+      "lead_days": 10,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 210330,
+      "exposure_after_alert_share": 0.08122787599512162
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-09-02",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": null,
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": null,
+      "exposure_after_alert_share": null
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "core_alert",
+      "date": "2024-04-08",
+      "days_after_closure": 2,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "core_alert",
+      "date": "2024-09-02",
+      "days_after_closure": 3,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": null,
+     "X": null
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "145": {
+     "control": null,
+     "Y": null,
+     "X": null
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 14
+  },
+  "k2": {
+   "review_load": {
+    "episodes": 6,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 487,
+    "exposure_days": 28740,
+    "eligible_merchant_quarters": 314.7433264887064,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 1.9063152400835073,
+    "non_bustout_alerts_with_at_least_3_disputes": 1,
+    "case_openings": 6,
+    "escalations": 0,
+    "reviews": 6,
+    "delivery_reviews": 0,
+    "review_load": 1.9063152400835073,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 1,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-04-08",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-06-16",
+      "caught_before_closure": true,
+      "lead_days": 10,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 210330,
+      "exposure_after_alert_share": 0.08122787599512162
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-09-02",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": null,
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": null,
+      "exposure_after_alert_share": null
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "core_alert",
+      "date": "2024-04-08",
+      "days_after_closure": 2,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "core_alert",
+      "date": "2024-09-02",
+      "days_after_closure": 3,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": null,
+     "X": null
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "145": {
+     "control": null,
+     "Y": null,
+     "X": null
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 9
+  },
+  "x": {
+   "review_load": {
+    "episodes": 0,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 0,
+    "exposure_days": 29227,
+    "eligible_merchant_quarters": 320.0766598220397,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 0.0,
+    "non_bustout_alerts_with_at_least_3_disputes": 0,
+    "case_openings": 0,
+    "escalations": 0,
+    "reviews": 0,
+    "delivery_reviews": 0,
+    "review_load": 0.0,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 3,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-04-04",
+      "caught_before_closure": true,
+      "lead_days": 2,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 43641,
+      "exposure_after_alert_share": 0.022756592429591237
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-06-21",
+      "caught_before_closure": true,
+      "lead_days": 5,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 58233,
+      "exposure_after_alert_share": 0.02248914992071467
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-08-29",
+      "caught_before_closure": true,
+      "lead_days": 1,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": "2024-10-31",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 145,
+      "kind": "core_alert",
+      "date": "2024-10-31",
+      "days_after_closure": 1,
+      "before_closure": false,
+      "trigger_codes": [
+       "S",
+       "X"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": null,
+     "Y": null,
+     "X": {
+      "date": "2024-04-04",
+      "days_before_closure": 2,
+      "before_closure": true
+     }
+    },
+    "136": {
+     "control": null,
+     "Y": null,
+     "X": {
+      "date": "2024-06-21",
+      "days_before_closure": 5,
+      "before_closure": true
+     }
+    },
+    "139": {
+     "control": null,
+     "Y": null,
+     "X": {
+      "date": "2024-08-29",
+      "days_before_closure": 1,
+      "before_closure": true
+     }
+    },
+    "145": {
+     "control": null,
+     "Y": null,
+     "X": {
+      "date": "2024-10-31",
+      "days_before_closure": -1,
+      "before_closure": false
+     }
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 4
+  },
+  "c0": {
+   "review_load": {
+    "episodes": 50,
+    "eligible_merchant_days": 29227,
+    "suppressed_eligible_days": 3604,
+    "exposure_days": 25623,
+    "eligible_merchant_quarters": 280.6078028747433,
+    "eligible_merchants": 124,
+    "episodes_per_100_eligible_merchant_quarters": 17.818463880107718,
+    "non_bustout_alerts_with_at_least_3_disputes": 45,
+    "case_openings": 50,
+    "escalations": 0,
+    "reviews": 50,
+    "delivery_reviews": 0,
+    "review_load": 17.818463880107718,
+    "delivery_review_load": 0.0,
+    "total_eligible_merchant_quarters": 320.0766598220397
+   },
+   "detections": {
+    "n_bustouts": 4,
+    "caught_before_closure": 1,
+    "merchants": [
+     {
+      "merchant_id": 132,
+      "onboarded_at": "2024-01-29 13:20:57",
+      "closed_at": "2024-04-06 15:36:20",
+      "first_core_alert": "2024-04-08",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 1917730,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 136,
+      "onboarded_at": "2024-04-03 11:55:04",
+      "closed_at": "2024-06-26 09:53:59",
+      "first_core_alert": "2024-06-16",
+      "caught_before_closure": true,
+      "lead_days": 10,
+      "approved_gmv_cents": 2589382,
+      "gmv_after_alert_cents": 210330,
+      "exposure_after_alert_share": 0.08122787599512162
+     },
+     {
+      "merchant_id": 139,
+      "onboarded_at": "2024-07-04 17:51:16",
+      "closed_at": "2024-08-30 10:04:42",
+      "first_core_alert": "2024-09-02",
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4510091,
+      "gmv_after_alert_cents": 0,
+      "exposure_after_alert_share": 0.0
+     },
+     {
+      "merchant_id": 145,
+      "onboarded_at": "2024-09-02 15:32:42",
+      "closed_at": "2024-10-30 13:57:12",
+      "first_core_alert": null,
+      "caught_before_closure": false,
+      "lead_days": null,
+      "approved_gmv_cents": 4513241,
+      "gmv_after_alert_cents": null,
+      "exposure_after_alert_share": null
+     }
+    ],
+    "late_detections": [
+     {
+      "merchant_id": 132,
+      "kind": "core_alert",
+      "date": "2024-04-08",
+      "days_after_closure": 2,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 132,
+      "kind": "D_flag",
+      "date": "2024-04-17",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 136,
+      "kind": "D_flag",
+      "date": "2024-07-04",
+      "days_after_closure": 8,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "core_alert",
+      "date": "2024-09-02",
+      "days_after_closure": 3,
+      "before_closure": false,
+      "trigger_codes": [
+       "V",
+       "S"
+      ]
+     },
+     {
+      "merchant_id": 139,
+      "kind": "D_flag",
+      "date": "2024-09-10",
+      "days_after_closure": 11,
+      "before_closure": false,
+      "trigger_codes": [
+       "D"
+      ]
+     }
+    ]
+   },
+   "arm_first_firings": {
+    "132": {
+     "control": {
+      "date": "2024-04-08",
+      "days_before_closure": -2,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "136": {
+     "control": {
+      "date": "2024-06-16",
+      "days_before_closure": 10,
+      "before_closure": true
+     },
+     "Y": null,
+     "X": null
+    },
+    "139": {
+     "control": {
+      "date": "2024-09-02",
+      "days_before_closure": -3,
+      "before_closure": false
+     },
+     "Y": null,
+     "X": null
+    },
+    "145": {
+     "control": null,
+     "Y": null,
+     "X": null
+    }
+   },
+   "escalations": 0,
+   "core_episodes": 53
+  }
+ },
+ "parameters": {
+  "rule_set": "c0",
+  "c3_young": "c1b",
+  "window_days": 30,
+  "baseline_days": 90,
+  "min_orders_30d": 20,
+  "min_base_days": 30,
+  "min_base_orders": 20,
+  "min_days_since_first_order": 14,
+  "min_cum_orders": 30,
+  "min_disputes": 3,
+  "min_triggers": 2,
+  "episode_suppression_days": 90,
+  "dispute_flag_min": 3,
+  "chargeback_warn": 0.015,
+  "chargeback_breach": 0.025,
+  "volume_zscore_alert": 3.0,
+  "ticket_drift_alert": 2.0,
+  "new_account_gmv_share_alert": 0.4,
+  "refund_base_min": 0.02,
+  "refund_recent_max": 0.005,
+  "young_variants": {
+   "c1a": {
+    "age_days": 90,
+    "gmv_share": 0.4
+   },
+   "c1b": {
+    "age_days": 90,
+    "gmv_share": 0.6
+   },
+   "c1c": {
+    "age_days": 180,
+    "gmv_share": 0.4
+   }
+  },
+  "selection_workload_max": 5.0,
+  "merchant_quarter_days": 91.3125,
+  "chargeback_evidence_max_p": 0.05,
+  "fulfilment_reasons": [
+   "item_not_received",
+   "not_as_described"
+  ],
+  "iteration2_young": "c1b",
+  "delivery": {
+   "deadline_quantile": 0.95,
+   "cohort_days": 7,
+   "min_unconfirmed": 3,
+   "max_p": 5e-05,
+   "reference_upper_confidence": 0.99,
+   "calibration_shipped_by": "2024-07-31",
+   "calibration_known_by": "2024-08-31",
+   "calibration": "reports/monitoring_delivery_calibration.json"
+  },
+  "ladder": [
+   "s1",
+   "s2",
+   "s3",
+   "s4"
+  ],
+  "delivery_review_max": 1.0
+ },
+ "source": {
+  "events": {
+   "file": "reports/monitor_events_416-baseline.csv.gz",
+   "sha256": "ef53144c64df44155e58a9067d999a85d6ccbede32e049df91ed0b2a088e17cf"
+  },
+  "shipments": {
+   "file": "reports/monitor_shipments_416-baseline.csv.gz",
+   "sha256": "4ce596be74fe12f464f532a19fdc53430404fbe8f8d8c50ba98a08d518d28b86"
+  }
+ }
+}

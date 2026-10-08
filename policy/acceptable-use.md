@@ -97,11 +97,27 @@ Review evidence must be **quoted verbatim** in verdicts; paraphrase is not evide
 Thresholds are config-driven and modeled on publicly known card-network monitoring
 program *concepts* (values illustrative, not any network's actual numbers):
 
-- Chargeback rate: warn ≥ 1.5% (30d), breach ≥ 2.5%.
-- Volume z-score ≥ 3 vs merchant baseline (bust-out ramp shape).
-- Avg-ticket drift ≥ 2× baseline alongside volume ramp.
-- New-account GMV share ≥ 40% (thin-account concentration).
-- Refund rate collapse to ~0 while disputes rise (extract-phase signature).
+- **06.1 Chargeback rate**: warn at 1.5%, breach at 2.5% of approved orders over 30
+  days. A level is reached when the disputes learned of in the last 30 days are more than
+  that level would plausibly produce at the merchant's 30-day order volume: a Poisson
+  count with mean level × orders reaches at least that many disputes with probability at
+  most 5%. The window needs at least 3 disputes and 20 approved orders. A breach alerts
+  alone; a warning needs a second trigger.
+- **06.2** Volume z-score ≥ 3 against the merchant's completed 90-day baseline.
+- **06.3** Average-ticket drift ≥ 2× baseline.
+- **06.4** New-account GMV share ≥ 40% (thin-account concentration). **06.4b** At a
+  merchant less than 90 days after onboarding, a new-account GMV share ≥ 60% alerts alone.
+- **06.5** Refund rate collapse to about zero while disputes rise.
+- **06.6 Delivery confirmation**: the platform settles a merchant when it reports a
+  shipment. A reported shipment is overdue when the carrier has not confirmed delivery
+  within the time by which 95% of the portfolio's carrier-confirmed deliveries arrive.
+  When more of a merchant's shipments from the last seven days that have reached this
+  deadline remain unconfirmed than the portfolio's normal unconfirmed share could
+  plausibly produce, settlement pauses pending delivery evidence. Missing confirmation
+  is a reason to review, not proof of non-delivery: some carriers do not confirm.
+- An alert opens a case; the same merchant opens no new case for 90 days. A
+  delivery-confirmation alert inside an open case escalates it to a settlement-pause
+  review without restarting the 90 days.
 
 Actions ladder: monitor → reserve → settlement pause → offboard; memos cite the
 triggering metric values.

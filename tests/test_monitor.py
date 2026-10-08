@@ -438,7 +438,9 @@ def test_detection_uses_strict_calendar_date_and_gmv_after_alert() -> None:
 
 def test_report_on_synthetic_data(tmp_path: Path) -> None:
     df = history([5] * 400, disputes=1)
-    result = evaluation.report(df, CFG, world_file(tmp_path))
+    cfg = copy.deepcopy(CFG)
+    cfg["monitor"]["rule_set"] = "c0"
+    result = evaluation.report(df, cfg, world_file(tmp_path))
     assert set(result["rule_sets"]) == set(RULE_SETS)
     assert result["rule_sets"]["c0"]["selected"]
     assert all(r["prefix_invariance"]["freeze"]["passed"] for r in result["rule_sets"].values())
@@ -464,7 +466,8 @@ def test_watch_cli_file_mode_defaults_to_sidecar_date(
                   "gmv_cents": 30000, "n_disputes": 3}], as_of="2024-02-15")
     path, out = tmp_path / "events.csv.gz", tmp_path / "alerts.json"
     export_events(path, df)
-    monkeypatch.setattr(sys, "argv", ["monitor.watch", "--events", str(path), "--out", str(out)])
+    monkeypatch.setattr(sys, "argv", ["monitor.watch", "--events", str(path), "--rules", "c0",
+                                      "--out", str(out)])
     watch.main()
     saved = json.loads(out.read_text())
     assert saved["meta"]["as_of"] == "2024-02-15"
