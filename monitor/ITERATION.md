@@ -330,3 +330,36 @@ X. It is committed before any full-period run.
   should again flag most bust-outs weeks before closure.
 - Either chargeback variant may still exceed the ceiling; then the fallback above is
   the result.
+
+## 5. Iteration 2 results (after the adoption commit)
+
+The registered gate adopted **s1 (K1 + Y + X)** at
+[`a18303d`](https://github.com/nacapule/merchant-risk-screener/commit/a18303d), before
+the full-period evaluation and generation of worlds 1041 and 2718. Calibration
+used only world 416 data known by 2024-08-31: a 5-day delivery deadline and
+p_ref = 0.048215897. The gate used only world 416's dev data; s1's non-bust-out
+review load was 3.54 per 100 eligible merchant-quarters, against c0's 17.82, with
+zero delivery review load. It was the first registered candidate within both
+ceilings, so the order did not reach K2.
+
+| World | s1 dev caught | s1 held-out caught | Dev load / 100 | Operating held-out load / 100 | Follow-up load / 100 | X before closure |
+| --- | --- | --- | --- | --- | --- | --- |
+| 416 | 4 of 4 | 4 of 4 | 3.54 | 2.91 | 6.11 | 5 of 8 |
+| 1041 | 3 of 3 | 4 of 5 | 2.62 | 2.46 | 9.60 | 5 of 8 |
+| 2718 | 3 of 3 | 5 of 5 | 5.09 | 2.36 | 7.13 | 5 of 8 |
+
+Load counts non-bust-out openings plus escalations per 100 eligible
+merchant-quarters; all these reviews are openings. Across the fresh worlds, Y
+catches 15 of 16 bust-outs, 8–41 days before closure. X fires at 24 of 24 across
+all worlds and at no other merchant, but only 15 of 24 before closure, up to
+6 days ahead. It supports settlement-pause evidence; Y supplies early warning.
+
+World 416 remains audit-informed. The fresh worlds are draws of the same known
+mechanism, with calibration unchanged. Follow-up load exceeds 5 as orders stop
+on 2025-08-31 while disputes continue; 2718's dev load also slightly exceeds 5.
+The gate's ceiling applied only to 416 dev. Remaining exposure is not prevented
+loss, and the replay does not simulate intervention.
+
+The [evaluation write-up](../reports/monitoring_evaluation.md) gives provenance,
+raw workload counts, merchant-level timing, diagnostics and sources. World 416's
+41 openings and 8 escalations have 49 cached advisory memos.

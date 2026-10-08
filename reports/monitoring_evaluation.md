@@ -1,160 +1,298 @@
-# Monitoring evaluation
+# Monitoring evaluation: iteration 2
 
-The shipped control, **c0**, catches 1 of 4 dev bust-outs and 1 of 4 held-out
-bust-outs before closure. **c1b**, the dev-ranked candidate, catches 4 of 4 in each
-group with the same non-bust-out workload. It does not ship: the pre-registered
-workload ceiling rejected the control itself, so no extension could be selected.
+Iteration 2 adopts **s1: K1 chargeback evidence + Y young-merchant concentration +
+X delivery confirmation**. On world 416, dev non-bust-out review load falls from
+17.82 to 3.54 per 100 eligible merchant-quarters, within the unchanged ceiling of
+5, while s1 catches 4 of 4 dev and 4 of 4 held-out bust-outs before closure. It
+catches 15 of 16 on two fresh worlds; across all three worlds, X provides
+settlement-pause evidence before closure at 15 of 24 bust-outs.
 
-## World and monitor
+## Worlds and provenance
 
-This evaluation uses the current
-[`bnpl-fraud-workbench`](https://github.com/nacapule/bnpl-fraud-workbench) event
-world `416-baseline`: seed 416, generator 2.0.0, regenerated at
+All three synthetic worlds come from
+[`bnpl-fraud-workbench`](https://github.com/nacapule/bnpl-fraud-workbench), generator
+2.0.0 at commit
 [`1db054d`](https://github.com/nacapule/bnpl-fraud-workbench/tree/1db054dacb04da11672d4c4e71267f122ce02e7e).
-Its manifest identity is
-`208122eba8effdd94fb5b19bcac8d9916c5c13a7d71119c972ab24c368b7bc29`, matching the
-world used by the workbench's committed results at `417a9b1`. There are 158
-merchants; approved orders run from 2024-01-01 through 2025-08-31, with outcomes
-observed through 2025-12-29. Full provenance is in
-[`monitor/eval/world_416-baseline.json`](../monitor/eval/world_416-baseline.json)
-and the evaluation JSON's `meta.world`.
+Approved orders run from 2024-01-01 through 2025-08-31; outcomes are observed
+through 2025-12-29. Their manifest identities are:
 
-The monitor replays daily merchant activity against
-[AUP-06](../policy/acceptable-use.md#aup-06--ongoing-monitoring-triggers-portfolio-side).
-c0 alerts on a chargeback breach alone or two corroborating triggers: chargeback
-warning/breach, volume z-score, ticket drift or new-account GMV share. Episodes
-re-arm after 90 days. A separate flag records at least 3 disputes in 30 days,
-regardless of order volume; it is outside rule selection and the main detection
-count. Bust-out labels and closure dates are evaluation-only inputs.
+- [416-baseline](../monitor/eval/world_416-baseline.json):
+  `208122eba8effdd94fb5b19bcac8d9916c5c13a7d71119c972ab24c368b7bc29`.
+- [1041-baseline](../monitor/eval/world_1041-baseline.json):
+  `decde07cfa196e682f7956b0ab52093def3a2b49417c773ce0d1346cf7a0bb60`.
+- [2718-baseline](../monitor/eval/world_2718-baseline.json):
+  `6d031b7f75697a295610408b7a57db979c01e7205c5ffb340bdd129eddb658c8`.
 
-## Corrections and checks
+World 416 is audit-informed: iteration 1's c0 alerts and c1b's held-out result
+were public before registration. The earlier audit had also summarised all eight
+bust-outs, including their closure dates; this held-out comparison is not blind.
+Worlds 1041 and 2718 were generated only after the adoption commit, with 416's
+calibration carried over unchanged. They are fresh draws of the same generator
+and bust-out mechanism, not tests of a different fraud type.
 
-An audit of the previous monitor on this world found that its order-day rollup
-dropped 405 of 1,855 disputes, later data rewrote earlier alerts, and zero-order
-windows produced non-finite metrics. That monitor produced 45 alerts and caught
-2 of 8 bust-outs through one-dispute breaches.
+Source tables, event exports and the daily calendar reconcile exactly; shipment
+exports also reconcile to their source. Dispute reasons are allegations, separate
+from the workbench's later adjudicated labels. No world contains refund events.
 
-The corrected calendar includes days without orders and continues through the
-observation cutoff. Source tables, extracted events and the calendar reconcile
-exactly: **151,268 approved orders, 1,855 disputes and 0 refunds**. Replay evaluates
-each day with information available by its end: orders at order time, disputes at
-opening and refunds at their known time. The prior baseline excludes the trailing
-30-day window and uses up to 90 days, requiring at least 30 baseline days and 20
-baseline orders. Trailing ratios are undefined below 20 approved orders, and
-warning/breach triggers require at least 3 disputes. Undefined metrics serialize
-as `null`; non-finite output is rejected. New-account GMV share is now weighted by
-order amount.
+| World | Approved orders | Disputes | Non-receipt | Not as described | Unauthorized | Shipments | Carrier confirmations |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 416 | 151,268 | 1,855 | 953 | 576 | 326 | 151,268 | 148,120 |
+| 1041 | 151,152 | 1,947 | 1,025 | 582 | 340 | 151,152 | 147,979 |
+| 2718 | 152,297 | 1,936 | 999 | 572 | 365 | 152,297 | 149,180 |
 
-For all six rule sets, replaying only data through **2024-09-30, 2024-12-31 and
-2025-05-31** reproduces the full-history alerts and dispute-count flags through
-each cutoff exactly. These are the days before the workbench's classifier,
-calibrator and policy freezes. The recorded checks are in
-[`monitoring_evaluation.json`](monitoring_evaluation.json); the test suite has
-53 passing tests, 38 of them for the monitor (one replays the committed export to the
-committed alerts), and the underwriting decision matrix remains 16/16.
+## What changed
 
-## Frozen protocol and dev selection
+Iteration 1 could not select an extension because c0's chargeback workload
+already exceeded capacity. **K1** replaces the raw-rate test with an evidence test
+for the dispute count under [AUP-06.1](../policy/acceptable-use.md#aup-06--ongoing-monitoring-triggers-portfolio-side):
+at least 20 approved orders and 3 disputes in 30 days, then a Poisson upper-tail
+probability no greater than 0.05 at the warning rate of 1.5% or breach rate of
+2.5%. A breach alerts alone; a warning needs corroboration. At 100 orders, for
+example, a breach needs 6 disputes. This removes many small-count breaches while
+retaining the control's volume, ticket and new-account-share triggers.
 
-The [protocol](../monitor/ITERATION.md#1-protocol-fixed-before-any-rule-selection)
-fixed six rule sets and a workload ceiling of 5 non-bust-out episodes per 100
-eligible merchant-quarters, selecting only on events known by 2024-10-31. Bust-outs
-were split by closure date: four before 2024-11-01 for dev and four later for the
-held-out comparison; rules and the secondary comparison were frozen before the
-full-period replay. The comparison is audit-informed: the prior audit had already
-summarised all eight bust-outs, so this is not a blind test.
+**K2** applies K1 to non-receipt and not-as-described disputes only, leaving
+unauthorized allegations to surveillance.
 
-The [dev selection](monitoring_selection_dev.json) found c0 already above the
-ceiling: 50 non-bust-out episodes over 280.6 eligible merchant-quarters, or 17.8 per
-100. All extensions retain c0, so none could qualify. Under the registered fallback,
-**c0 ships**; the ceiling was not relaxed. Without the ceiling, the dev ranking
-puts c1b first: add an alert for a merchant under 90 days since onboarding whose
-new-account GMV share is at least 60%. It catches 4 of 4 dev bust-outs without
-adding a non-bust-out episode and is reported below as a secondary result.
+**Y**, c1b carried forward unchanged as AUP-06.4b, alerts when a merchant is under
+90 days since onboarding and new accounts contribute at least 60% of trailing
+GMV. An account is new if created within 30 days before its order. Y is the early
+warning.
 
-There are no merchant-refund events in this world. The implemented refund-collapse
-extension cannot fire: c2 equals c0, and c3 equals c1b here.
+The simulated platform settles merchants when they report shipments. **X**,
+AUP-06.6, tests a seven-day cohort of reported shipments that have reached the
+calibrated confirmation deadline. It needs at
+least 3 unconfirmed shipments and a binomial upper-tail probability no greater
+than 0.00005 at the portfolio reference share. Missing confirmation supports
+review; it does not prove non-delivery.
+
+Every trigger requires at least 14 days and 30 cumulative approved orders since
+the merchant's first order, retaining iteration 1's eligibility rule.
+
+A firing opens a case, suppressing another opening for 90 days. The first X
+firing inside a case not opened with X creates a settlement-pause escalation,
+without restarting suppression. Openings and escalations each count as reviews.
+The separate three-dispute surveillance flag remains outside selection and the
+main detection count.
+
+Screening reads the dated
+[August policy snapshot](../screen/prompts/acceptable-use_2026-08.md), so AUP-06
+could change without changing cached screening results. Replay dates shipments
+and carrier confirmations by when the platform knew them; a later confirmation
+never rewrites an earlier day. Prefix checks at 2024-09-30, 2024-12-31 and
+2025-05-31 reproduce earlier openings, escalations and flags for every arm in
+every world.
+
+## Frozen sequence
+
+The [registered protocol](../monitor/ITERATION.md#4-iteration-2-chargeback-evidence-and-delivery-confirmation)
+fixed the policy proposal, candidates, capacity criteria and evaluation before
+any iteration-2 run. The commit sequence records each boundary:
+
+| Step | Commit |
+| --- | --- |
+| Proposed policy text and screening snapshot | [62a80f9](https://github.com/nacapule/merchant-risk-screener/commit/62a80f9) |
+| Registration before calibration or candidate runs | [aa17735](https://github.com/nacapule/merchant-risk-screener/commit/aa17735) |
+| Delivery calibration | [9770d4f](https://github.com/nacapule/merchant-risk-screener/commit/9770d4f) |
+| s1 adoption and AUP-06 update | [a18303d](https://github.com/nacapule/merchant-risk-screener/commit/a18303d) |
+| Full-period and fresh-world evaluation | [ce98210](https://github.com/nacapule/merchant-risk-screener/commit/ce98210) |
+
+## Calibration and dev gate
+
+Calibration uses only world 416 data known by **2024-08-31**, without labels.
+The 95th-percentile confirmation lag among 42,924 shipments reported by
+2024-07-31 and confirmed by the cutoff gives a **5-day deadline**. In the
+reference cohort, 2,287 of 49,734 shipments lacked confirmation within that
+deadline: an observed share of 0.04598. Its one-sided 99% upper confidence bound
+sets **p_ref = 0.048215897**. Including bust-outs can raise that reference and
+make X harder to fire. X's replay before September 2024 is in-sample for this
+calibration; the held-out period and fresh worlds are out of sample.
+
+**The gate uses only world 416's dev data**, events known by 2024-10-31, with
+dev bust-outs excluded from workload. It adopts the first candidate in the
+registered order s1, s2, s3, s4 with total review load ≤ 5 and delivery review
+load ≤ 1 per 100 eligible merchant-quarters. Detection does not rank candidates.
+All reported non-bust-out reviews below are openings; there are no escalations.
+
+| Set | Components | Reviews | Eligible quarters | Review load / 100 | Delivery load / 100 | Dev caught |
+| --- | --- | --- | --- | --- | --- | --- |
+| **s1, adopted** | K1 + Y + X | 11 | 310.3 | 3.54 | 0.00 | 4 of 4 |
+| s2 | K2 + Y + X | 6 | 314.7 | 1.91 | 0.00 | 4 of 4 |
+| s3 | K1 + Y | 11 | 310.3 | 3.54 | 0.00 | 4 of 4 |
+| s4 | K2 + Y | 6 | 314.7 | 1.91 | 0.00 | 4 of 4 |
+| k1 | K1 control | 11 | 310.3 | 3.54 | 0.00 | 1 of 4 |
+| k2 | K2 control | 6 | 314.7 | 1.91 | 0.00 | 1 of 4 |
+| x | X alone | 0 | 320.1 | 0.00 | 0.00 | 3 of 4 |
+| c0, reference | Iteration-1 control | 50 | 280.6 | 17.82 | 0.00 | 1 of 4 |
+
+## Full-period workload
+
+Workload counts non-bust-out openings plus escalations. Exposure is eligible
+merchant-days outside suppression, divided by 91.3125; it differs by rule set.
+Dev ends 2024-10-31, operating held-out runs 2024-11-01–2025-08-31, and follow-up
+runs 2025-09-01–2025-12-29. All reviews in this table are openings, and delivery
+review load is zero throughout.
+
+| World | Period | s1 reviews | s1 quarters | s1 load / 100 | c0 reviews | c0 quarters | c0 load / 100 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 416 | Dev | 11 | 310.3 | 3.54 | 50 | 280.6 | 17.82 |
+| 416 | Operating held-out | 12 | 412.6 | 2.91 | 73 | 348.4 | 20.95 |
+| 416 | Follow-up | 10 | 163.7 | 6.11 | 9 | 160.1 | 5.62 |
+| 1041 | Dev | 8 | 305.4 | 2.62 | 54 | 268.3 | 20.13 |
+| 1041 | Operating held-out | 10 | 406.1 | 2.46 | 71 | 346.9 | 20.47 |
+| 1041 | Follow-up | 15 | 156.2 | 9.60 | 12 | 150.1 | 8.00 |
+| 2718 | Dev | 16 | 314.5 | 5.09 | 66 | 274.0 | 24.09 |
+| 2718 | Operating held-out | 10 | 424.1 | 2.36 | 72 | 363.9 | 19.78 |
+| 2718 | Follow-up | 12 | 168.2 | 7.13 | 10 | 160.5 | 6.23 |
+
+The K2 control lowers workload further; on 416, k2's rates are
+1.91, 2.17 and 5.45 across the three periods. The registered order did not need
+this alternative because s1 qualified first.
+
+Including bust-outs, s1 opens 41 cases with 8 escalations on 416, 41 with 7 on
+1041, and 46 with 8 on 2718. The 416 output retains 179 dispute-count flags and
+has [49 advisory memos](monitoring_memos.md): 25 opening memos recommend a reserve,
+16 recommend monitoring, and all 8 escalation memos recommend a settlement pause.
+None recommends offboarding.
 
 ## Bust-out results
 
-Full-period c0 produces **140 core alert episodes at 72 merchants** and **179
-dispute-count flags**. c1b also produces 140 core episodes. Each result cell below
-shows **first core alert · calendar days before/after closure · share of approved
-sales after the alert**. Sales means GMV, not order count; the share includes only
-sales on later calendar days. An alert on the closure day is not an early detection.
+Cohorts use closure date: dev before 2024-11-01, held-out thereafter. A firing on
+the closure day is not a detection. In the tables, positive timing means days
+before closure, zero means the closure day, and negative timing means after.
+Shipped GMV after X counts shipments reported on later calendar days as a share
+of that merchant's total shipped GMV.
 
-### Dev bust-outs
+### World 416
 
-| Merchant | c0: alert · timing · sales after | c1b: alert · timing · sales after | First dispute-count flag · days after closure |
-| --- | --- | --- | --- |
-| 132 | 2024-04-08 · 2 after · 0.0% | 2024-03-17 · 20 before · 64.7% | 2024-04-17 · 11 |
-| 136 | 2024-06-16 · 10 before · 8.1% | 2024-05-23 · 34 before · 68.3% | 2024-07-04 · 8 |
-| 139 | 2024-09-02 · 3 after · 0.0% | 2024-08-09 · 21 before · 50.2% | 2024-09-10 · 11 |
-| 145 | 2024-11-10 · 11 after · 0.0% | 2024-10-09 · 21 before · 53.3% | 2024-11-10 · 11 |
+s1 catches **4 of 4 dev and 4 of 4 held-out**; K1 and c0 each catch 1 of 4 in
+each cohort. Y supplies all first cases, 18–49 days before closure.
 
-Merchant 145's c0 alert occurs after the dev selection cutoff; full-period reporting
-retains its dev assignment by closure date.
+| Merchant / cohort | Closure | First s1 case | Y lead, days | First X / timing, days | Shipped GMV after X |
+| --- | --- | --- | --- | --- | --- |
+| 132 / dev | 2024-04-06 | 2024-03-17 | +20 | 2024-04-04 / +2 | 3.4% |
+| 136 / dev | 2024-06-26 | 2024-05-23 | +34 | 2024-06-21 / +5 | 2.6% |
+| 139 / dev | 2024-08-30 | 2024-08-09 | +21 | 2024-08-29 / +1 | 3.3% |
+| 145 / dev | 2024-10-30 | 2024-10-09 | +21 | 2024-10-31 / −1 | 0.0% |
+| 147 / held-out | 2025-02-06 | 2024-12-19 | +49 | 2025-02-02 / +4 | 11.0% |
+| 149 / held-out | 2025-03-06 | 2025-02-10 | +24 | 2025-03-06 / 0 | 0.0% |
+| 151 / held-out | 2025-04-27 | 2025-04-09 | +18 | 2025-04-26 / +1 | 1.8% |
+| 158 / held-out | 2025-08-29 | 2025-08-10 | +19 | 2025-08-29 / 0 | 0.0% |
 
-### Held-out bust-outs
+### World 1041
 
-| Merchant | c0: alert · timing · sales after | c1b: alert · timing · sales after | First dispute-count flag · days after closure |
-| --- | --- | --- | --- |
-| 147 | 2025-01-31 · 6 before · 13.6% | 2024-12-19 · 49 before · 76.9% | 2025-02-12 · 6 |
-| 149 | 2025-03-06 · closure day · 0.0% | 2025-02-10 · 24 before · 64.7% | 2025-03-16 · 10 |
-| 151 | 2025-05-03 · 6 after · 0.0% | 2025-04-09 · 18 before · 51.0% | 2025-05-07 · 10 |
-| 158 | 2025-09-05 · 7 after · 0.0% | 2025-08-10 · 19 before · 61.6% | 2025-09-13 · 15 |
+s1 catches **3 of 3 dev and 4 of 5 held-out**; K1 and c0 each catch 1 of 3 and
+3 of 5. Merchant 149 never fires Y; X opens its first case one day after closure.
 
-c0's six remaining first alerts occur on or after closure. Five combine volume z
-and new-account share after enough prior history becomes available; merchant 145
-alerts on breach plus new-account share. Every bust-out's dispute-count flag arrives
-6–15 days after closure. These flags preserve surveillance of low-volume disputes,
-but offer no pre-closure warning here.
+| Merchant / cohort | Closure | First s1 case | Y lead, days | First X / timing, days | Shipped GMV after X |
+| --- | --- | --- | --- | --- | --- |
+| 133 / dev | 2024-04-23 | 2024-04-15 | +8 | 2024-04-22 / +1 | 5.2% |
+| 137 / dev | 2024-07-04 | 2024-06-20 | +14 | 2024-07-01 / +3 | 5.1% |
+| 142 / dev | 2024-09-30 | 2024-09-07 | +23 | 2024-09-30 / 0 | 0.0% |
+| 145 / held-out | 2024-11-24 | 2024-11-05 | +19 | 2024-11-21 / +3 | 5.2% |
+| 149 / held-out | 2024-12-25 | 2024-12-26 | Never | 2024-12-26 / −1 | 0.0% |
+| 152 / held-out | 2025-03-24 | 2025-03-06 | +18 | 2025-03-24 / 0 | 0.0% |
+| 154 / held-out | 2025-05-17 | 2025-04-19 | +28 | 2025-05-13 / +4 | 13.3% |
+| 157 / held-out | 2025-08-03 | 2025-07-04 | +30 | 2025-07-30 / +4 | 12.9% |
 
-## Non-bust-out workload
+### World 2718
 
-c0 and c1b have exactly the same non-bust-out episodes in every reporting period.
-Exposure counts eligible days outside the 90-day suppression period and divides
-them by 91.3125 to obtain merchant-quarters.
+s1 catches **3 of 3 dev and 5 of 5 held-out**; K1 and c0 each catch 2 of 3 and
+3 of 5. Across the fresh worlds, Y catches 15 of 16, 8–41 days before closure.
 
-| Period | Episodes, c0 = c1b | Eligible merchant-quarters | Episodes per 100 quarters | Episodes with ≥ 3 disputes |
-| --- | --- | --- | --- | --- |
-| Dev: 2024-01-01–2024-10-31 | 50 | 280.6 | 17.8 | 45 |
-| Operating held-out: 2024-11-01–2025-08-31 | 73 | 348.4 | 21.0 | 69 |
-| Follow-up: 2025-09-01–2025-12-29 | 9 | 160.1 | 5.6 | 9 |
+| Merchant / cohort | Closure | First s1 case | Y lead, days | First X / timing, days | Shipped GMV after X |
+| --- | --- | --- | --- | --- | --- |
+| 135 / dev | 2024-04-21 | 2024-03-14 | +38 | 2024-04-15 / +6 | 17.7% |
+| 138 / dev | 2024-06-05 | 2024-05-14 | +22 | 2024-06-02 / +3 | 10.1% |
+| 141 / dev | 2024-08-09 | 2024-07-09 | +31 | 2024-08-09 / 0 | 0.0% |
+| 143 / held-out | 2024-11-24 | 2024-10-30 | +25 | 2024-11-22 / +2 | 10.9% |
+| 144 / held-out | 2024-12-21 | 2024-11-12 | +39 | 2024-12-21 / 0 | 0.0% |
+| 148 / held-out | 2025-03-02 | 2025-01-20 | +41 | 2025-02-28 / +2 | 3.6% |
+| 153 / held-out | 2025-05-07 | 2025-04-03 | +34 | 2025-05-05 / +2 | 0.0% |
+| 158 / held-out | 2025-08-05 | 2025-07-19 | +17 | 2025-08-05 / 0 | 0.0% |
 
-The table totals **132 non-bust-out alert episodes**. The labels identify bust-outs,
-not every merchant that warrants review. Chargeback rules dominate this workload:
-45 of 50 dev episodes and 69 of 73 operating held-out episodes have at least
-3 disputes in the window.
+## Delivery confirmation and the registered expectations
 
-Across the whole portfolio, including bust-outs, c0's **140 core episodes** comprise
-108 breach alone, 16 volume z plus new-account share, 12 warning plus volume z,
-3 breach plus new-account share and 1 breach plus volume z. The JSON also reports
-non-bust-out workload for each workbench protocol window.
+X fires at **24 of 24 bust-outs and at no other merchant** in any period. It
+fires before closure at **15 of 24**, 5 of 8 in each world, with leads of 1–6
+days. The remaining firings occur on the closure day or one day after. Shipped
+GMV reported after its first firing ranges from 0.0% to 17.7% per bust-out.
 
-## Interpretation and next step
+This fits [§4.6's expectations](../monitor/ITERATION.md#46-expectations-stated-in-advance):
+with a 5-day deadline, X's expected lead is at most about 9 days and can be zero
+or negative. It supplies settlement-pause evidence rather than early warning.
+K1 and c0 have identical pre-closure detection in every world and cohort;
+bust-out disputes mostly arrive after closure. Y again flags most fresh-world
+bust-outs weeks earlier. The isolated x arm preserves X's record independently
+of the combined rule's case suppression.
 
-c1b separates the young merchants in this world: the 11 young non-bust-out merchants
-that became eligible peak at 20–49% new-account GMV share, versus 68–88% for the eight
-bust-outs. Nineteen non-bust-out merchants onboard during the world, so age alone is
-not a label. Across eligible non-bust-out merchants of any age, 76 of 110 exceed 40%
-and 7 exceed 60%; the age condition matters. Portfolio new-account share also drifts
-from about 0.29 in January 2024 to about 0.20–0.22 in 2025.
+The mechanism was known from the workbench's
+[public methods document](https://github.com/nacapule/bnpl-fraud-workbench/blob/1db054d/docs/methods.md):
+bust-outs stop delivering 8–14 days before disappearing while still reporting
+shipments. These results are mechanism-informed validation, not a discovery.
 
-The earlier c1b alerts leave 50.2–76.9% of each bust-out's approved sales after the
-alert. That is remaining exposure, not measured prevented loss: the replay does not
-simulate intervention. Thresholds are illustrative, not calibrated. Four held-out
-bust-outs on one synthetic seed, already described by the audit, do not provide a
-general performance estimate.
+## Non-bust-out cases: evaluation-only diagnostics
 
-The next step is a separately pre-registered delivery-confirmation rule using the
-workbench's dated shipment and carrier-delivery evidence, alongside a new protocol
-for the control's chargeback workload at low volume. That protocol must set the
-review-capacity criterion before evaluation.
+Non-bust-out labels do not establish that a case was unwarranted. B means
+chargeback breach, W warning, V volume and S new-account concentration. Breaches
+dominate s1's cases, followed by volume with concentration; Y and X add no
+non-bust-out cases in these worlds.
 
-Sources: [full evaluation JSON](monitoring_evaluation.json),
-[dev selection JSON](monitoring_selection_dev.json),
-[c0 alerts and flags](monitoring_alerts.json), and
-[event export metadata](monitor_events_416-baseline.csv.gz.meta.json).
-[`monitoring_memos.md`](monitoring_memos.md) holds one advisory memo per c0 alert
-episode (140), drafted by the configured model `gpt-6.1-sol` through the Codex CLI;
-`make memos-offline` reproduces it from the cached responses.
+| World | B | B+S | V+S | W+S | W+V | Chargeback cases | Cases with ≥ half of window disputes on fraud/abuse-labelled orders |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 416 | 19 | 1 | 9 | 2 | 2 | 24 | 5 of 24 |
+| 1041 | 20 | 1 | 9 | 1 | 2 | 24 | 6 of 24 |
+| 2718 | 19 | 0 | 12 | 5 | 2 | 26 | 7 of 26 |
+
+The window dispute reasons and later adjudicated bases are:
+
+| World | Non-receipt | Not as described | Unauthorized | No fraud basis (`none`) | Third-party fraud | Never-pay | Non-receipt abuse |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 416 | 42 | 30 | 28 | 72 | 16 | 10 | 2 |
+| 1041 | 45 | 32 | 20 | 75 | 11 | 9 | 2 |
+| 2718 | 46 | 31 | 25 | 76 | 17 | 7 | 2 |
+
+These bases describe customer-side fraud or abuse on disputed orders, not proof
+against the merchant. `none` means no adjudicated fraud basis, not a resolved
+merchant-risk judgment. Labels enter only the evaluation diagnostics; the
+monitor reads observable events. c0's corresponding chargeback-case counts are
+123, 129 and 137, with full diagnostics in the JSONs.
+
+## Capacity after orders stop
+
+s1's follow-up load exceeds 5 in every world. Every merchant's orders end on
+2025-08-31 while disputes keep arriving, so the trailing order denominator
+shrinks against delayed disputes. All ten 416 follow-up openings fall on
+2025-09-14–27 and fire B alone, with 21–102 orders and 3–6 disputes in their
+windows. This boundary needs separate treatment before interpreting follow-up
+load as an ongoing portfolio's capacity requirement.
+
+World 2718's dev load, **5.09**, is also just above the ceiling. The registered
+gate applied only to world 416; it did not promise capacity compliance on fresh
+worlds or in every subsequent period. No threshold was changed after adoption.
+
+## Iteration 1 and limits
+
+Iteration 1 retained c0 under its own registered fallback: c0's dev workload was
+already 17.82 per 100 eligible merchant-quarters, above 5, and every candidate
+extended it. c1b was reported as a secondary result, catching 4 of 4 dev and
+4 of 4 held-out bust-outs with the same workload. Iteration 2 changes the
+chargeback evidence requirement and adopts that young-merchant rule; it does
+not revise iteration 1's selection.
+
+The evaluation covers three synthetic worlds and one known bust-out mechanism.
+World 416's held-out comparison is audit-informed, and fresh seeds test variation
+within the same mechanism. Monitoring thresholds and review-capacity assumptions
+are illustrative, not calibrated to a real portfolio. Carrier outages or
+merchant differences could invalidate X's binomial reference. Approved sales
+after Y and shipments after X are remaining exposure, not prevented loss: the
+replay does not simulate intervention or its effect on settlement and losses.
+
+Sources: [416 evaluation](monitoring_evaluation.json),
+[1041 evaluation](monitoring_evaluation_1041-baseline.json),
+[2718 evaluation](monitoring_evaluation_2718-baseline.json),
+[delivery calibration](monitoring_delivery_calibration.json),
+[iteration-2 dev gate](monitoring_gate_dev.json),
+[s1 openings, escalations and flags](monitoring_alerts.json), and
+[iteration-1 selection](monitoring_selection_dev.json). Export and evaluation
+input locations are listed in the [report index](README.md).
