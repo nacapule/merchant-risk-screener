@@ -204,3 +204,129 @@ Proposed AUP-06 bullets (the introduction and the actions ladder stay):
 - An alert opens a case; the same merchant opens no new case for 90 days. A
   delivery-confirmation alert inside an open case escalates it to a settlement-pause
   review without restarting the 90 days.
+
+### 4.2 What was known when this protocol was written
+
+- Everything in §2 and §3 was public: all 140 c0 alert episodes with their metrics, and
+  c1b's held-out result (4 of 4). On world 416 the held-out comparison is therefore
+  audit-informed twice over, and c1b's held-out result is no longer a test.
+- The workbench's public methods document describes the bust-out mechanism: a resale
+  merchant ramps up for 40 to 75 days, stops delivering 8 to 14 days before it
+  disappears and still reports shipments, and its customers claim non-delivery after
+  the closure. It also states the legitimate world's delivery assumptions (median 2.5
+  days; 0.5% of parcels lost; 1.5% delivered without carrier confirmation). The
+  delivery rule below is mechanism-informed monitoring validation, not a discovery. The
+  workbench's simulator code was not read.
+- No iteration-2 rule set was run before this registration, and no per-merchant or
+  per-period delivery or dispute-reason statistic was computed. Loading and exporting
+  the world printed whole-period totals only, as reconciliation checks: 151,268
+  shipments and 148,120 carrier confirmations; 1,855 disputes, of which 326 allege
+  unauthorized use, 953 non-receipt and 576 goods not as described. c0 was replayed
+  on the new export to confirm that its 140 alerts and 179 flags are unchanged.
+
+### 4.3 Rules, candidates and the registered order
+
+Parameters are in `config.yaml` `monitor:`; everything not listed here is as in §1.
+
+- **K1 chargeback evidence.** With at least 20 approved orders and at least 3 disputes in
+  the trailing 30 days: breach B when P[Poisson(0.025 × orders) ≥ disputes] ≤ 0.05;
+  warning W when not B and P[Poisson(0.015 × orders) ≥ disputes] ≤ 0.05. Three disputes
+  breach up to 32 orders and warn up to 54; 100 orders need 6 disputes to breach.
+- **K2** is K1 counting only disputes that allege non-receipt or not-as-described goods;
+  the 3-dispute floor applies to that count. Unauthorized disputes are reported, not
+  used.
+- The control keeps c0's structure: B alone, or any two of {W or B, V, T, S}.
+- **Y** is c1b, unchanged: under 90 days since onboarding and new-account GMV share
+  ≥ 60%.
+- **X delivery confirmation.** With D and p_ref from §4.4: on day d, n = the merchant's
+  shipments reported on days d − D − 6 through d − D; u = those without a carrier
+  confirmation known by the end of d. X fires when u ≥ 3 and P[Binomial(n, p_ref) ≥ u]
+  ≤ 0.00005. About 91 daily looks per merchant-quarter × 0.00005 gives 0.46 nominal
+  noise firings per 100 merchant-quarters if the binomial reference holds; merchant
+  differences or carrier outages would break that.
+- Every trigger needs the merchant eligible that day (§1).
+- **Cases.** A firing opens a case unless the merchant opened one in the previous 90
+  days. The first X firing inside an open case not opened with X is an escalation to a
+  settlement-pause review: at most one per case, and the 90 days do not restart.
+
+| Set | Components | Role |
+| --- | --- | --- |
+| s1 | K1 control + Y + X | candidate 1 |
+| s2 | K2 control + Y + X | candidate 2 |
+| s3 | K1 control + Y | candidate 3 |
+| s4 | K2 control + Y | candidate 4 |
+| k1, k2 | control variants alone | reported arms |
+| x | X alone | reported arm |
+| c0 | iteration-1 control | reference |
+
+**Criterion.** On dev (events known by 2024-10-31; the four dev bust-outs excluded):
+
+- review load = non-bust-out case openings plus escalations per 100 eligible
+  non-bust-out merchant-quarters, with §1's exposure (eligible days outside days 1–90
+  after a case opening, divided by 91.3125);
+- delivery review load = openings that include X plus escalations, on the same exposure.
+
+The first set in the order s1, s2, s3, s4 with review load ≤ 5 and, when it contains X,
+delivery review load ≤ 1 is adopted. The ceiling of 5 is §1's, unchanged. Bust-out
+detection does not rank candidates. If no set qualifies, no capacity-feasible
+replacement is adopted: `config.yaml` keeps c0 as the reference, and the arms are
+reported as secondary results.
+
+The gate writes [`reports/monitoring_gate_dev.json`](../reports/monitoring_gate_dev.json).
+The adoption commit sets `monitor.rule_set` and replaces AUP-06's bullets in
+`policy/acceptable-use.md` with the §4.1 text for the adopted components only: 06.1
+(K1, or the alternative wording for K2), 06.4b if Y, and 06.6 with the case sentence if
+X. It is committed before any full-period run.
+
+### 4.4 Delivery calibration (data through 2024-08-31 only)
+
+- D = the smallest whole number of days t such that at least 95% of the lags
+  (confirmation day − shipment day) of shipments reported by 2024-07-31 and confirmed by
+  2024-08-31 are at most t. Every such shipment has at least 31 days of follow-up.
+- p_ref = the one-sided 99% Clopper–Pearson upper bound of the share of shipments
+  reported by 2024-08-31 − D that were not confirmed within D days.
+- All merchants, no labels. Bust-outs' unconfirmed shipments raise p_ref, which can only
+  make X harder to fire.
+- Written to
+  [`reports/monitoring_delivery_calibration.json`](../reports/monitoring_delivery_calibration.json)
+  and committed before the gate. X's replay before September 2024 uses parameters fitted
+  on that period; it is reported as in-sample for X's calibration. The held-out period
+  and the fresh worlds are out of sample.
+
+### 4.5 Evaluation after the adoption commit
+
+- **World 416, full period**, with §1's periods (dev; operating held-out 2024-11-01 to
+  2025-08-31; follow-up to 2025-12-29) and the same prefix checks at 2024-09-30,
+  2024-12-31 and 2025-05-31, extended to escalations.
+- **Fresh worlds.** `1041-baseline` and `2718-baseline` (the workbench's other
+  development seeds) are generated at workbench commit `1db054d` only after the adoption
+  commit. They are loaded in the same scratch MySQL and exported like 416. Bust-out ids and
+  closure times come from each world for evaluation only. 416's calibration is carried
+  over unchanged. Every set is replayed once over the whole period. A bug fix is allowed
+  and disclosed; a parameter change is not.
+- **Reported for every bust-out and arm** (the control in use, Y, X, and c0): first
+  firing; days before or after closure; approved GMV after the first firing. For X,
+  also the shipped GMV reported after its first firing, which settlement would still
+  have paid. This is remaining exposure, not prevented loss.
+- **Workload.** Review load and delivery review load per period and per world, with raw
+  counts and total eligible exposure, since suppression makes the denominator depend on
+  the set.
+- **Diagnostics, evaluation only.** The dispute-reason mix of each chargeback case, and
+  the workbench's adjudicated labels on the disputed orders in each non-bust-out case's
+  window. Non-bust-out cases are not called false alerts.
+- **Reconciliation** of approved orders, disputes by reason, shipments and
+  confirmations against the source on every world.
+- **Memos.** One memo per case opening and per escalation of the adopted set on 416, drafted
+  by the configured memo model. If nothing is adopted, c0's alerts and memos stay.
+
+### 4.6 Expectations stated in advance
+
+- X fires about D + 1 to 3 days after a bust-out stops delivering, so its lead before
+  closure is at most about 14 − D days, and may be zero or negative for some bust-outs.
+  It is evidence for a settlement pause, not an early warning.
+- K1 and K2 do not change pre-closure bust-out detection: bust-out disputes arrive after
+  closure.
+- Y is the early warning. If the fresh worlds follow the documented mechanism, it
+  should again flag most bust-outs weeks before closure.
+- Either chargeback variant may still exceed the ceiling; then the fallback above is
+  the result.
