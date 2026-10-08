@@ -405,7 +405,15 @@ def report(events: pd.DataFrame, cfg: dict, world: dict, shipments: pd.DataFrame
     events = events.loc[events.d.le(as_of)].copy()
     spine = build_spine(events, as_of)
     counts = reconcile(spine, events, counts_at(events, as_of))
+    if needs_delivery(cfg["monitor"]["rule_set"]) and (shipments is None or calibration is None):
+        raise ValueError(f"the selected set {cfg['monitor']['rule_set']} needs shipments and "
+                         "the delivery calibration")
     if shipments is not None:
+        meta = shipments.attrs["meta"]
+        if day(meta["as_of"]) < as_of:
+            raise ValueError(f"shipment export observed only through {meta['as_of']}, "
+                             f"before {as_of.date()}")
+        reconcile_shipments(shipments, shipment_counts_at(shipments, meta["as_of"]))
         counts["shipments"] = reconcile_shipments(clip_shipments(shipments, as_of),
                                                   shipment_counts_at(shipments, as_of))
         shipments = clip_shipments(shipments, as_of)

@@ -332,8 +332,8 @@ def test_gate_counts_reviews_from_january_only() -> None:
 def test_report_with_shipments_and_labels() -> None:
     df, ships = bustout_world()
     df.attrs["meta"]["as_of"] = "2024-04-29"
-    ships.attrs["meta"] = {"as_of": "2024-04-29",
-                           "counts": shipment_totals(clip_shipments(ships, "2024-04-29")),
+    ships = clip_shipments(ships, "2024-04-29")
+    ships.attrs["meta"] = {"as_of": "2024-04-29", "counts": shipment_totals(ships),
                            "source": {"file": "synthetic", "sha256": "synthetic"}}
     world = {"world": "synthetic",
              "bustouts": [{"merchant_id": 1, "onboarded_at": "2024-01-01",
@@ -353,3 +353,19 @@ def test_report_with_shipments_and_labels() -> None:
     assert all(check["passed"] for check in s1["prefix_invariance"].values())
     assert set(result["case_diagnostics"]) == {"s1", "c0"}
     json.dumps(result, allow_nan=False)
+
+
+def test_report_refuses_short_shipments_and_a_missing_selected_set() -> None:
+    df, ships = bustout_world()
+    df.attrs["meta"]["as_of"] = "2024-04-29"
+    early = clip_shipments(ships, "2024-03-01")
+    early.attrs["meta"] = {"as_of": "2024-03-01", "counts": shipment_totals(early),
+                           "source": {"file": "synthetic", "sha256": "synthetic"}}
+    world = {"world": "synthetic", "bustouts": [], "protocol_freezes": {},
+             "protocol_windows": {}}
+    cfg = copy.deepcopy(CFG)
+    cfg["monitor"]["rule_set"] = "s1"
+    with pytest.raises(ValueError, match="observed only through 2024-03-01"):
+        evaluation.report(df, cfg, world, early, CALIBRATION)
+    with pytest.raises(ValueError, match="needs shipments and the delivery calibration"):
+        evaluation.report(df, cfg, world)
