@@ -103,3 +103,37 @@ deliveries. Non-delivery is the bust-outs' defining behaviour, so a delivery rul
 would be the obvious next signal. It is outside AUP-06, and adding it after the audit
 would test a rule chosen with the answer in view. It is left for a separately
 pre-registered follow-up.
+
+## 2. Dev selection (events known by 2024-10-31)
+
+`python -m monitor.evaluate select` → [`reports/monitoring_selection_dev.json`](../reports/monitoring_selection_dev.json).
+
+| Rule set | Dev bust-outs caught (of 4) | Non-bust-out episodes | Per 100 eligible merchant-quarters | Within ceiling (≤ 5) |
+| --- | --- | --- | --- | --- |
+| c0 | 1 | 50 | 17.8 | no |
+| c1a | 4 | 51 | 18.2 | no |
+| c1b | 4 | 50 | 17.8 | no |
+| c1c | 4 | 53 | 19.1 | no |
+| c2 | 1 | 50 | 17.8 | no |
+| c3 (c0, c1b's rule, F) | 4 | 50 | 17.8 | no |
+
+Exposure: 280.6 eligible non-bust-out merchant-quarters.
+
+- **Nothing is selected; c0 ships.** The control alone produces 17.8 non-bust-out
+  episodes per 100 eligible merchant-quarters, more than three times the ceiling.
+  Every candidate adds conditions to c0, so none can meet the ceiling. As registered,
+  the ceiling is not relaxed, and `config.yaml` keeps `monitor.rule_set: c0`.
+- **Where the workload comes from.** 45 of c0's 50 dev episodes rest on at least 3
+  disputes in the window: chargeback-rate alerts at small merchants. The extensions
+  are not the problem.
+- **The dev ranking without the ceiling** puts c1b first: young merchant (under 90
+  days since onboarding) with a new-account GMV share of at least 60%. It catches all
+  four dev bust-outs, 20, 34, 21 and 21 days before closure, and adds no non-bust-out
+  episode on dev. It is evaluated on the held-out period as the dev-ranked candidate,
+  a secondary result. It does not ship.
+- **c0 on dev:** one bust-out caught before closure (136, 10 days before). Its alerts
+  on 132 and 139 came two and three days after closure; 145 had no alert by
+  2024-10-31.
+
+A next iteration would need a new protocol that addresses the control's
+chargeback workload at low volume.
