@@ -11,8 +11,10 @@ merchant activity.
 
 **All 16 fixture merchants are fictional** (generated sites + review corpora with
 authored evidence markers); decisions are fully reproducible offline. The companion
-repo [`bnpl-fraud-workbench`](../bnpl-fraud-workbench) supplies the consumer-side
-fraud operation this plugs into.
+repo [`bnpl-fraud-workbench`](https://github.com/nacapule/bnpl-fraud-workbench/tree/v1-2026-08)
+supplies the consumer-side fraud operation this plugs into. The monitoring results
+here were produced on its synthetic world at tag `v1-2026-08` (seed 416); later
+versions of that repo generate a different world.
 
 ```mermaid
 graph LR
@@ -34,7 +36,7 @@ graph LR
 | decisions | **16/16 exact** vs expected · decline recall 5/5 · screening prompt v2 + scorecard calibration, both iterations measured and logged |
 | prohibited recall | **3/3 = 1.0** (missing a prohibited merchant is the unacceptable error; false prohibited flags route to human review instead) |
 | quote validity | **117/117 = 100%** — every restricted/prohibited verdict and review quote verified verbatim against source; an unverifiable quote voids its verdict to insufficient-info (AUP-05.1) |
-| monitoring | both injected merchant bust-outs caught by **leading** indicators (avg-ticket drift ~2× + 100% new-account GMV) weeks before their chargeback waves land; chargebacks attributed by *opened* date — the monitor cannot see future disputes |
+| monitoring (workbench `v1-2026-08` world) | both injected merchant bust-outs caught by **leading** indicators (avg-ticket drift ~2× + 100% new-account GMV) weeks before their chargeback waves land; chargebacks attributed by *opened* date — the monitor cannot see future disputes |
 
 ## Quickstart
 
@@ -47,8 +49,10 @@ Fully offline: LLM responses for the fixture set are committed
 (`screen/eval/cache/`). Live modes use a Claude Code-compatible CLI
 (`CLAUDE_CLI_BIN`) or the `anthropic` SDK. Model per task is config-driven
 (`config.yaml llm.tasks` — categorize/screen/themes/memo each routable, env
-`LLM_MODEL_<TASK>` overrides). The monitoring module needs the companion repo's
-MySQL up (`make monitor`).
+`LLM_MODEL_<TASK>` overrides). The monitoring module (`make monitor`) reads the
+companion repo's MySQL. The committed alerts and memos in [`reports/`](reports) come
+from the workbench at tag `v1-2026-08`; to reproduce them, check out that tag and load
+its world there (`make venv up generate load`) before running `make monitor` here.
 
 ## Design notes
 
@@ -67,9 +71,10 @@ MySQL up (`make monitor`).
 - **Decision records.** One page per merchant in [`decisions/`](decisions):
   application summary → signals → verdicts with quotes → scorecard breakdown →
   decision + conditions → what-would-change-it (for declines).
-- **Monitoring is point-in-time honest.** Chargebacks lag 60–95 days in the simulated
-  data, so the leading indicators (volume z-score, ticket drift, new-account GMV
-  share) do the early catching — exactly the dynamic real monitoring programs face.
+- **Monitoring is point-in-time honest.** Chargebacks lag 60–95 days in the
+  workbench's `v1-2026-08` simulated data, so the leading indicators (volume z-score,
+  ticket drift, new-account GMV share) do the early catching — exactly the dynamic
+  real monitoring programs face.
 
 ## Limitations & honesty
 
