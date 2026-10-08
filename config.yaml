@@ -86,3 +86,18 @@ monitor:
     c1c: {age_days: 180, gmv_share: 0.40} # broader age band at the control share threshold
   selection_workload_max: 5.0    # episodes per 100 eligible merchant-quarters on dev only
   merchant_quarter_days: 91.3125 # convert unsuppressed eligible days into quarter exposure
+  # iteration 2 (monitor/ITERATION.md §4): parameters fixed before any iteration-2 run
+  chargeback_evidence_max_p: 0.05 # a level is reached only when lower rates rarely give the count
+  fulfilment_reasons: [item_not_received, not_as_described]  # K2 counts these allegations only
+  iteration2_young: c1b          # Y carried forward unchanged from iteration 1
+  delivery:
+    deadline_quantile: 0.95      # overdue once later than 95% of confirmed deliveries
+    cohort_days: 7               # a week of shipments that have reached the deadline
+    min_unconfirmed: 3           # never pause settlement over one or two parcels
+    max_p: 0.00005               # ~91 daily looks per quarter: ~0.46 nominal noise per 100
+    reference_upper_confidence: 0.99  # an upper bound on p_ref can only make X harder to fire
+    calibration_shipped_by: "2024-07-31"  # every lag shipment has 31 days of follow-up
+    calibration_known_by: "2024-08-31"    # nothing later enters D or p_ref
+    calibration: reports/monitoring_delivery_calibration.json
+  ladder: [s1, s2, s3, s4]       # registered adoption order: first within both ceilings
+  delivery_review_max: 1.0       # settlement-pause reviews per 100 eligible merchant-quarters

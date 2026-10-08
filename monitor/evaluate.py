@@ -9,24 +9,31 @@ import hashlib
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import yaml
+from scipy.stats import beta
 
 from monitor.metrics import compute_metrics
 from monitor.rollup import (
     REPO,
     build_spine,
+    clip_shipments,
     counts_at,
     day,
     db_url,
     event_totals,
     load_events,
+    load_shipments,
     reconcile,
+    reconcile_shipments,
+    shipment_counts_at,
     source_info,
 )
-from monitor.rules import RULE_SETS
+from monitor.rules import RULE_SETS, needs_delivery, predicates
 from monitor.watch import evaluate
 
+DEV_START = pd.Timestamp("2024-01-01")
 DEV_AS_OF = pd.Timestamp("2024-10-31")
 DEV_END = pd.Timestamp("2024-11-01")
 OPERATING_END = pd.Timestamp("2025-09-01")
@@ -188,6 +195,123 @@ def select_dev(events: pd.DataFrame, cfg: dict, world: dict) -> dict:
                                  "c0 infeasible or no feasible candidate; c0 ships")}
 
 
+def calibrate(shipments: pd.DataFrame, cfg: dict, world_name: str) -> dict:
+    """Fix the delivery deadline and reference rate from early shipments only, without labels."""
+    d = cfg["monitor"]["delivery"]
+    known_by, shipped_by = day(d["calibration_known_by"]), day(d["calibration_shipped_by"])
+    if shipments.shipped_d.gt(known_by).any() or shipments.confirmed_d.gt(known_by).any():
+        raise ValueError(f"calibration refuses data after {known_by.date()}")
+    timed = shipments.loc[shipments.shipped_d.le(shipped_by) & shipments.confirmed_d.notna()]
+    lags = np.sort((timed.confirmed_d - timed.shipped_d).dt.days.to_numpy())
+    if not len(lags):
+        raise ValueError("no confirmed shipments to calibrate the deadline")
+    # The smallest whole day t with at least the quantile share of lags <= t.
+    deadline = max(int(lags[int(np.ceil(d["deadline_quantile"] * len(lags))) - 1]), 0)
+    reference = shipments.loc[shipments.shipped_d.le(known_by - pd.Timedelta(days=deadline))]
+    late = reference.confirmed_d.isna() | reference.confirmed_d.gt(
+        reference.shipped_d + pd.Timedelta(days=deadline))
+    x, n = int(late.sum()), len(reference)
+    if not n:
+        raise ValueError("no shipments reached the deadline before the calibration cutoff")
+    upper = 1.0 if x == n else float(beta.ppf(d["reference_upper_confidence"], x + 1, n - x))
+    meta = shipments.attrs.get("meta", {})
+    return {"world": world_name, "deadline_days": deadline, "p_ref": upper,
+            "lag_shipments": len(lags), "reference_shipments": n, "reference_unconfirmed": x,
+            "reference_observed_share": x / n, "deadline_quantile": d["deadline_quantile"],
+            "reference_upper_confidence": d["reference_upper_confidence"],
+            "calibration_shipped_by": str(shipped_by.date()),
+            "calibration_known_by": str(known_by.date()),
+            "source": meta.get("source"), "export_as_of": meta.get("as_of")}
+
+
+def load_calibration(cfg: dict, path: Path | None = None) -> dict:
+    return json.loads((path or REPO / cfg["monitor"]["delivery"]["calibration"]).read_text())
+
+
+def review_load(metrics: pd.DataFrame, replay: dict, bustout_ids: set[int],
+                start: pd.Timestamp, end: pd.Timestamp, cfg: dict) -> dict:
+    """Case openings and escalations are both reviews; X reviews also have their own ceiling."""
+    load = workload(metrics, replay["alerts"], bustout_ids, start, end, cfg)
+    inside = [[a for a in replay[key] if a["merchant_id"] not in bustout_ids
+               and start <= day(a["date"]) < end] for key in ("alerts", "escalations")]
+    openings, escalations = inside
+    delivery = sum("X" in a["trigger_codes"] for a in openings) + len(escalations)
+    quarters = load["eligible_merchant_quarters"]
+
+    def per_100(n: int) -> float | None:
+        return 100 * n / quarters if quarters > 0 else None
+
+    non = metrics.loc[~metrics.merchant_id.isin(bustout_ids)]
+    total = int((non.eligible & non.d.ge(start) & non.d.lt(end)).sum())
+    return {**load, "case_openings": len(openings), "escalations": len(escalations),
+            "reviews": len(openings) + len(escalations), "delivery_reviews": delivery,
+            "review_load": per_100(len(openings) + len(escalations)),
+            "delivery_review_load": per_100(delivery),
+            "total_eligible_merchant_quarters": total / cfg["monitor"]["merchant_quarter_days"]}
+
+
+def arm_firsts(metrics: pd.DataFrame, cfg: dict, rule_set: str, cohort: list[dict]) -> dict:
+    """Each arm's first eligible firing, regardless of case suppression."""
+    p = predicates(metrics, cfg, rule_set)
+    arms = {"control": p.control, "Y": p.Y, "X": p.X}
+    result = {}
+    for merchant in cohort:
+        mid, closure = merchant["merchant_id"], day(merchant["closed_at"])
+        mine = metrics.merchant_id.eq(mid) & metrics.eligible
+        row = {}
+        for arm, fired in arms.items():
+            days = metrics.loc[mine & fired, "d"]
+            first = days.min() if len(days) else None
+            row[arm] = None if first is None else {
+                "date": str(first.date()), "days_before_closure": int((closure - first).days),
+                "before_closure": bool(first < closure)}
+        result[str(mid)] = row
+    return result
+
+
+def adopt(candidates: dict, cfg: dict) -> str | None:
+    """The first registered set within the review ceiling and, with X, the delivery ceiling."""
+    m = cfg["monitor"]
+    for name in m["ladder"]:
+        load = candidates[name]["review_load"]
+        ok = load["review_load"] is not None and load["review_load"] <= m["selection_workload_max"]
+        if needs_delivery(name):
+            rate = load["delivery_review_load"]
+            ok = ok and rate is not None and rate <= m["delivery_review_max"]
+        if ok:
+            return name
+    return None
+
+
+def gate_dev(events: pd.DataFrame, shipments: pd.DataFrame, cfg: dict, world: dict,
+             calibration: dict) -> dict:
+    """Apply the registered ladder to dev data only; bust-out detection does not rank sets."""
+    if events.d.gt(DEV_AS_OF).any() or shipments.shipped_d.gt(DEV_AS_OF).any() \
+            or shipments.confirmed_d.gt(DEV_AS_OF).any():
+        raise ValueError("the gate refuses data after 2024-10-31")
+    spine = build_spine(events, DEV_AS_OF)
+    metrics = compute_metrics(spine, cfg, shipments, calibration)
+    cohort = [b for b in world["bustouts"] if day(b["closed_at"]) < DEV_END]
+    ids = {b["merchant_id"] for b in cohort}
+    names = [*cfg["monitor"]["ladder"], "k1", "k2", "x", "c0"]
+    sets = {}
+    for name in names:
+        replay = evaluate(metrics, cfg, name)
+        sets[name] = {"review_load": review_load(metrics, replay, ids, DEV_START, DEV_END, cfg),
+                      "detections": detections(events, replay, cohort),
+                      "arm_first_firings": arm_firsts(metrics, cfg, name, cohort),
+                      "escalations": len(replay["escalations"]),
+                      "core_episodes": len(replay["alerts"])}
+    adopted = adopt(sets, cfg)
+    return {"as_of": str(DEV_AS_OF.date()), "ladder": cfg["monitor"]["ladder"],
+            "adopted_rule_set": adopted, "ship_rule_set": adopted or "c0",
+            "reason": ("first registered set within both ceilings" if adopted else
+                       "no capacity-feasible replacement adopted; c0 stays as the reference"),
+            "calibration": calibration, "sets": sets, "parameters": cfg["monitor"],
+            "source": {"events": events.attrs.get("meta", {}).get("source"),
+                       "shipments": shipments.attrs.get("meta", {}).get("source")}}
+
+
 def prefix_checks(events: pd.DataFrame, full: dict, cfg: dict, rule_set: str,
                   world: dict, as_of: pd.Timestamp) -> dict:
     checks = {}
@@ -198,7 +322,7 @@ def prefix_checks(events: pd.DataFrame, full: dict, cfg: dict, rule_set: str,
         clipped = events.loc[events.d.le(cutoff)].copy()
         replay = evaluate(compute_metrics(build_spine(clipped, cutoff), cfg), cfg, rule_set)
         expected = {key: [a for a in full[key] if day(a["date"]) <= cutoff]
-                    for key in ("alerts", "dispute_count_flags")}
+                    for key in ("alerts", "escalations", "dispute_count_flags")}
         if replay != expected:
             raise ValueError(f"prefix invariance failed for {rule_set} at {cutoff.date()}")
         checks[name] = {"as_of": str(cutoff.date()), "passed": True,
@@ -250,10 +374,35 @@ def report(events: pd.DataFrame, cfg: dict, world: dict) -> dict:
             "rule_sets": results, "portfolio_new_account_gmv_share_by_month": shares}
 
 
+def _clip_checked(ap: argparse.ArgumentParser, events: pd.DataFrame | None,
+                  shipments: pd.DataFrame | None, cutoff: pd.Timestamp) -> tuple:
+    """Check export totals before clipping, then keep only what was known by the cutoff.
+
+    An export observed before the cutoff would zero-fill days it never saw, so it is refused.
+    """
+    for name, frame in [("event", events), ("shipment", shipments)]:
+        if frame is not None and day(frame.attrs["meta"]["as_of"]) < cutoff:
+            ap.exit(2, f"monitor: {name} export observed only through "
+                       f"{frame.attrs['meta']['as_of']}, before {cutoff.date()}\n")
+    if events is not None:
+        totals, counts = event_totals(events), events.attrs["meta"]["counts"]
+        if totals != counts:
+            ap.exit(2, f"monitor: event totals {totals} != source totals {counts}\n")
+        events = events.loc[events.d.le(cutoff)].copy()
+        assert not events.d.gt(cutoff).any()
+    if shipments is not None:
+        meta = shipments.attrs["meta"]
+        reconcile_shipments(shipments, shipment_counts_at(shipments, meta["as_of"]))
+        shipments = clip_shipments(shipments, cutoff)
+        assert not (shipments.shipped_d.gt(cutoff).any() or shipments.confirmed_d.gt(cutoff).any())
+    return events, shipments
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=("select", "report", "export-labels"))
+    ap.add_argument("command", choices=("select", "calibrate", "gate", "report", "export-labels"))
     ap.add_argument("--events", type=Path)
+    ap.add_argument("--shipments", type=Path)
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
     if args.command == "export-labels":
@@ -262,17 +411,42 @@ def main() -> None:
         labels = export_dispute_labels(args.out)
         print(f"wrote {args.out} ({len(labels)} disputes)")
         return
+    if args.command == "calibrate":
+        if args.shipments is None:
+            ap.error("calibrate needs --shipments")
+        cfg = yaml.safe_load((REPO / "config.yaml").read_text())
+        known_by = day(cfg["monitor"]["delivery"]["calibration_known_by"])
+        _, shipments = _clip_checked(ap, None, load_shipments(args.shipments), known_by)
+        output = calibrate(shipments, cfg, read_world()["world"])
+        path = REPO / cfg["monitor"]["delivery"]["calibration"]
+        path.write_text(json.dumps(output, indent=1, allow_nan=False))
+        print(f"deadline {output['deadline_days']} days; reference unconfirmed share "
+              f"{output['reference_observed_share']:.4f}, upper bound {output['p_ref']:.4f} "
+              f"({output['reference_unconfirmed']} of {output['reference_shipments']})")
+        print(f"wrote {path}")
+        return
     if args.events is None:
         ap.error("--events is required")
     events = load_events(args.events)
+    if args.command == "gate":
+        if args.shipments is None:
+            ap.error("gate needs --shipments")
+        events, shipments = _clip_checked(ap, events, load_shipments(args.shipments), DEV_AS_OF)
+        cfg = yaml.safe_load((REPO / "config.yaml").read_text())
+        output = gate_dev(events, shipments, cfg, read_world(), load_calibration(cfg))
+        path = REPO / "reports" / "monitoring_gate_dev.json"
+        path.write_text(json.dumps(output, indent=1, allow_nan=False))
+        print("set   reviews  per 100 mq  X reviews  X per 100 mq  dev bust-outs caught")
+        for name, result in output["sets"].items():
+            load = result["review_load"]
+            rate, x_rate = load["review_load"], load["delivery_review_load"]
+            print(f"{name:4s}  {load['reviews']:7d}  {rate:10.2f}  {load['delivery_reviews']:9d}  "
+                  f"{x_rate:12.2f}  {result['detections']['caught_before_closure']}")
+        print(f"adopted: {output['adopted_rule_set']}; ships: {output['ship_rule_set']}")
+        print(f"wrote {path}")
+        return
     if args.command == "select":
-        # Check export totals before clipping; metrics remain dev-only.
-        totals = event_totals(events)
-        counts = events.attrs["meta"]["counts"]
-        if totals != counts:
-            ap.exit(2, f"monitor: event totals {totals} != source totals {counts}\n")
-        events = events.loc[events.d.le(DEV_AS_OF)].copy()
-        assert not events.d.gt(DEV_AS_OF).any()
+        events, _ = _clip_checked(ap, events, None, DEV_AS_OF)
     cfg = yaml.safe_load((REPO / "config.yaml").read_text())
     world = read_world()
     output = (select_dev(events, cfg, world) if args.command == "select"
